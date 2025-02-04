@@ -1,6 +1,6 @@
 name: mason_logger_extension
 description: A powerful extension for Mason Logger that adds beautiful formatting, interactive prompts, QR codes, tables, and rich display features to your CLI applications.
-version: 0.1.3
+version: 0.1.4
 repository: https://github.com/codika-io/mason_logger_extension.git
 homepage: https://github.com/codika-io/mason_logger_extension
 issue_tracker: https://github.com/codika-io/mason_logger_extension/issues
