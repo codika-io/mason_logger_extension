@@ -1,6 +1,7 @@
 name: mason_logger_extension
 description: A utility extension for Mason Logger
 version: 0.1.0+1
+repository: https://github.com/codika-io/mason_logger_extension.git
 
 environment:
   sdk: ^3.5.0
