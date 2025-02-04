@@ -3,7 +3,33 @@ import 'dart:io' show stdin, stdout;
 import 'package:mason/mason.dart';
 import 'package:mason_logger_extension/mason_logger_extension.dart';
 
+/// Extension on [Logger] that provides various prompting utilities for
+/// interactive command line interfaces.
+///
+/// These methods enhance the base [Logger] functionality by adding support for:
+/// * Default values in prompts
+/// * Boolean prompts (yes/no questions)
+/// * String input with various options
+/// * Multi-line text input
+/// * Enum selection
+/// * Generic option selection
 extension LoggerExtensionPrompts on Logger {
+  /// Prompts the user for input with an optional default value.
+  ///
+  /// Example:
+  /// ```dart
+  /// final name = logger.promptWithDefault(
+  ///   'What is your name?',
+  ///   defaultValue: 'Guest',
+  ///   showDefaultInAnswer: true,
+  /// );
+  /// ```
+  ///
+  /// Parameters:
+  /// * [message] - The prompt message to display
+  /// * [defaultValue] - Value to use if user input is empty
+  /// * [hidden] - Whether to hide user input (useful for passwords)
+  /// * [showDefaultInAnswer] - Whether to show "(default)" when default value is used
   String promptWithDefault(
     String message, {
     String? defaultValue,
@@ -38,6 +64,21 @@ extension LoggerExtensionPrompts on Logger {
     return response;
   }
 
+  /// Prompts the user for a yes/no response.
+  ///
+  /// Example:
+  /// ```dart
+  /// if (logger.askForBool('Do you want to continue?')) {
+  ///   // User answered yes
+  /// }
+  /// ```
+  ///
+  /// Parameters:
+  /// * [prompt] - The question to ask
+  /// * [defaultValue] - Default boolean value if user hits enter
+  /// * [symbol] - Custom symbol to use instead of '?' (default)
+  /// * [color] - Custom color for the prompt
+  /// * [minQuestionLength] - Minimum length for question padding
   bool askForBool(
     String prompt, {
     bool? defaultValue = false,
@@ -71,6 +112,24 @@ extension LoggerExtensionPrompts on Logger {
     return response.toLowerCase() == 'y' || response.toLowerCase() == 'yes';
   }
 
+  /// Prompts the user for a string input with various options.
+  ///
+  /// Example:
+  /// ```dart
+  /// final apiKey = logger.askForString(
+  ///   'Enter your API key',
+  ///   hideInput: true,
+  ///   defaultValue: 'demo-key',
+  /// );
+  /// ```
+  ///
+  /// Parameters:
+  /// * [prompt] - The prompt message
+  /// * [enableEmpty] - Whether to allow empty input
+  /// * [defaultValue] - Value to use if input is empty
+  /// * [symbol] - Custom symbol to use instead of '?' (default)
+  /// * [color] - Custom color for the prompt
+  /// * [hideInput] - Whether to hide user input (for sensitive data)
   String askForString(
     String prompt, {
     bool enableEmpty = false,
@@ -100,6 +159,21 @@ extension LoggerExtensionPrompts on Logger {
     return response;
   }
 
+  /// Prompts the user for multi-line text input.
+  ///
+  /// The input is terminated when the user enters two consecutive empty lines.
+  ///
+  /// Example:
+  /// ```dart
+  /// final description = logger.askForMultilineString(
+  ///   'Enter project description',
+  /// );
+  /// ```
+  ///
+  /// Parameters:
+  /// * [prompt] - The prompt message
+  /// * [symbol] - Custom symbol to use instead of '?' (default)
+  /// * [color] - Custom color for the prompt
   String askForMultilineString(
     String prompt, {
     String symbol = '?',
@@ -128,6 +202,21 @@ extension LoggerExtensionPrompts on Logger {
     return lines.join('\n');
   }
 
+  /// Prompts the user to select one option from a list of strings.
+  ///
+  /// Example:
+  /// ```dart
+  /// final choice = logger.askForEnum(
+  ///   'Select a color',
+  ///   ['red', 'green', 'blue'],
+  /// );
+  /// ```
+  ///
+  /// Parameters:
+  /// * [prompt] - The prompt message
+  /// * [options] - List of string options to choose from
+  /// * [symbol] - Custom symbol to use instead of '?' (default)
+  /// * [color] - Custom color for the prompt
   String askForEnum(
     String prompt,
     List<String> options, {
@@ -141,6 +230,23 @@ extension LoggerExtensionPrompts on Logger {
     return response;
   }
 
+  /// Prompts the user to select one item from a list of generic type [T].
+  ///
+  /// Example:
+  /// ```dart
+  /// final user = logger.askForOne(
+  ///   'Select a user',
+  ///   users,
+  ///   displayFunction: (user) => user.name,
+  /// );
+  /// ```
+  ///
+  /// Parameters:
+  /// * [prompt] - The prompt message
+  /// * [options] - List of options to choose from
+  /// * [symbol] - Custom symbol to use instead of '?' (default)
+  /// * [color] - Custom color for the prompt
+  /// * [displayFunction] - Optional function to convert T to display string
   T askForOne<T>(
     String prompt,
     List<T> options, {
@@ -155,7 +261,24 @@ extension LoggerExtensionPrompts on Logger {
     );
   }
 
-  T askForSingleEnum<T extends Enum>(
+  /// Prompts the user to select one value from a list of enum values.
+  ///
+  /// Example:
+  /// ```dart
+  /// enum Color { red, green, blue }
+  /// final color = logger.askForEnumValue(
+  ///   'Select a color',
+  ///   Color.values,
+  /// );
+  /// ```
+  ///
+  /// Parameters:
+  /// * [prompt] - The prompt message
+  /// * [options] - List of enum values to choose from
+  /// * [symbol] - Custom symbol to use instead of '?' (default)
+  /// * [color] - Custom color for the prompt
+  /// * [displayFunction] - Optional function to convert enum to display string
+  T askForEnumValue<T extends Enum>(
     String prompt,
     List<T> options, {
     String symbol = '?',

@@ -22,7 +22,7 @@ extension LoggerExtensionLists on Logger {
   /// * [prefix] - Space or characters to add before each bullet (default: '  ')
   /// * [bullet] - The bullet character to use (default: '•')
   /// * [bulletColor] - The color to apply to the bullet (default: green)
-  void listBullets(
+  void infoBulletList(
     List<String> items, {
     String prefix = '  ',
     String bullet = '•',
@@ -54,7 +54,7 @@ extension LoggerExtensionLists on Logger {
   /// * [bulletColor] - The color to apply to the bullet (default: green)
   /// * [style] - The border style to use for connecting lines (default: normal)
   /// * [showLastLine] - Whether to show the vertical line after the last item (default: true)
-  void listAnchors(
+  void infoConnectedList(
     List<String> items, {
     String prefix = '  ',
     String? bullet,

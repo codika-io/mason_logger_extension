@@ -1,3 +1,32 @@
+# 0.1.4
+
+### Breaking Changes 🛠️
+
+- refactor!: rename functions to follow native Dart naming conventions
+- refactor!: remove imposed frame types
+
+# 0.1.3
+
+### Documentation 📝
+
+- docs: add tags in pub.dev page for better discoverability
+- docs: update package keywords and categories
+
+# 0.1.2
+
+### Dependencies 📦
+
+- deps: upgrade package dependencies to latest stable versions
+- deps: update minimum SDK constraints
+
+# 0.1.1
+
+### Documentation 📝
+
+- docs: improve README.md with better examples and usage instructions
+- docs: add API documentation and code examples
+- docs: enhance package description
+
 # 0.1.0+1
 
 ### Features 🎉

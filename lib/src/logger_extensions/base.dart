@@ -49,7 +49,7 @@ extension LoggerExtensionBase on Logger {
   /// [message] The message to log
   /// [before] Whether to add an empty line before the message (defaults to true)
   /// [after] Whether to add an empty line after the message (defaults to true)
-  void infoIso(
+  void infoIsolated(
     String message, {
     bool before = true,
     bool after = true,

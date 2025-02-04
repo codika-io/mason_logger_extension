@@ -14,38 +14,38 @@ extension LoggerStringExtensionColors on String {
   /// Wraps the string in light green ANSI color.
   ///
   /// Falls back to the original string if wrapping fails.
-  String get colorLightGreen => lightGreen.wrap(this) ?? this;
+  String get toLightGreen => lightGreen.wrap(this) ?? this;
 
   /// Wraps the string in light red ANSI color.
   ///
   /// Falls back to the original string if wrapping fails.
-  String get colorLightRed => lightRed.wrap(this) ?? this;
+  String get toLightRed => lightRed.wrap(this) ?? this;
 
   /// Wraps the string in light yellow ANSI color.
   ///
   /// Falls back to the original string if wrapping fails.
-  String get colorLightYellow => lightYellow.wrap(this) ?? this;
+  String get toLightYellow => lightYellow.wrap(this) ?? this;
 
   /// Wraps the string in light blue ANSI color.
   ///
   /// Falls back to the original string if wrapping fails.
-  String get colorLightBlue => lightBlue.wrap(this) ?? this;
+  String get toLightBlue => lightBlue.wrap(this) ?? this;
 
   /// Wraps the string in light magenta ANSI color.
   ///
   /// Falls back to the original string if wrapping fails.
-  String get colorLightMagenta => lightMagenta.wrap(this) ?? this;
+  String get toLightMagenta => lightMagenta.wrap(this) ?? this;
 
   /// Wraps the string in light cyan ANSI color.
   ///
   /// Falls back to the original string if wrapping fails.
-  String get colorLightCyan => lightCyan.wrap(this) ?? this;
+  String get toLightCyan => lightCyan.wrap(this) ?? this;
 
   /// Prefixes the string with a green checkmark (✓).
   ///
   /// Example:
   /// ```dart
-  /// 'Task completed'.checkmarked; // Prints: ✓ Task completed
+  /// 'Task completed'.toCheckmarked; // Prints: ✓ Task completed
   /// ```
-  String get checkmarked => (green.wrap('✓ ') ?? '') + this;
+  String get toCheckmarked => (green.wrap('✓ ') ?? '') + this;
 }
