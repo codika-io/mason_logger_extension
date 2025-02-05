@@ -22,7 +22,7 @@ void main() {
   // Tables for structured data
   logger
     ..info('\n3. Table Example:'.toLink)
-    ..printTable(
+    ..table(
       headers: ['Name', 'Status', 'Priority'],
       rows: [
         ['Task 1', 'Complete'.toLightGreen, 'High'.toLightRed],
@@ -40,12 +40,12 @@ void main() {
   // Lists with bullets and anchors
   logger
     ..info('\n4. Lists Examples:'.toLink)
-    ..infoBulletList(
+    ..listBullets(
       ['First item', 'Second item', 'Third item'],
       bulletColor: cyan,
     )
     ..nextLine()
-    ..infoConnectedList(
+    ..listAnchors(
       ['Step 1: Initialize', 'Step 2: Configure', 'Step 3: Run'],
       style: LoggerBorderStyle.rounded,
     );
@@ -53,7 +53,7 @@ void main() {
   // QR Code generation
   logger
     ..info('\n5. QR Code Example:'.toLink)
-    ..displayQRCode('https://github.com/codika-io/mason_logger_extension');
+    ..qrCode('https://github.com/codika-io/mason_logger_extension');
 
   // Interactive prompts (commented out as they require user input)
   logger.info('\n6. Prompts Examples:'.toLink);

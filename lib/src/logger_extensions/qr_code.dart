@@ -21,7 +21,7 @@ extension LoggerExtensionQR on Logger {
   /// [data] The string data to encode in the QR code
   /// [spacingTop] Number of empty lines to add before the QR code (defaults to 1)
   /// [spacingBottom] Number of empty lines to add after the QR code (defaults to 1)
-  void displayQRCode(String data, {int spacingTop = 1, int spacingBottom = 1}) {
+  void qrCode(String data, {int spacingTop = 1, int spacingBottom = 1}) {
     final qrCode = QrCode.fromData(
       data: data,
       errorCorrectLevel: QrErrorCorrectLevel.L,

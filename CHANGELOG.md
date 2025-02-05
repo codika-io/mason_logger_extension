@@ -1,8 +1,17 @@
+# 0.1.6
+
+- refactor!: rename `printTable` method to `table` for better consistency with Dart naming conventions
+- refactor!: rename `displayQRCode` method to `qrCode` for better consistency with Dart naming conventions
+- refactor!: rename `infoBulletList` method to `listBullets` for better consistency with Dart naming conventions
+- refactor!: rename `infoConnectedList` method to `listAnchors` for better consistency with Dart naming conventions
+
+### Features ✨
+
+- feat: add `borderType` parameter to `table` method to control table border style
+
 # 0.1.5
 
 ### Breaking Changes 🛠️
-
-- refactor!: rename `printTable` method to `table` for better consistency with Dart naming conventions
 
 ### Features ✨
 

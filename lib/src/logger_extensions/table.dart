@@ -59,7 +59,7 @@ extension LoggerExtensionTable on Logger {
   /// Throws [AssertionError] if:
   /// * Column widths length doesn't match headers length
   /// * Any row has a different number of columns than headers
-  void printTable({
+  void table({
     required List<String> headers,
     required List<List<String>> rows,
     List<int>? columnWidths,

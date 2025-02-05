@@ -22,7 +22,7 @@ extension LoggerExtensionLists on Logger {
   /// * [prefix] - Space or characters to add before each bullet (default: '  ')
   /// * [bullet] - The bullet character to use (default: '•')
   /// * [bulletColor] - The color to apply to the bullet (default: green)
-  void infoBulletList(
+  void listBullets(
     List<String> items, {
     String prefix = '  ',
     String bullet = '•',
@@ -53,27 +53,28 @@ extension LoggerExtensionLists on Logger {
   /// * [bullet] - Optional bullet character to display after the line
   /// * [bulletColor] - The color to apply to the bullet (default: green)
   /// * [style] - The border style to use for connecting lines (default: normal)
-  /// * [showLastLine] - Whether to show the vertical line after the last item (default: true)
-  void infoConnectedList(
+  /// * [showLinesBetweenItems] - Whether to show vertical lines between items (default: false)
+  void listAnchors(
     List<String> items, {
     String prefix = '  ',
     String? bullet,
     AnsiCode bulletColor = green,
     LoggerBorderStyle style = LoggerBorderStyle.normal,
-    bool showLastLine = true,
+    bool showLinesBetweenItems = false,
   }) {
     final teeRight = LoggerBorder.getChar(style, BorderPart.teeRight);
     final vertical = LoggerBorder.getChar(style, BorderPart.vertical);
+    final bottomLeft = LoggerBorder.getChar(style, BorderPart.bottomLeft);
     final bulletStr = bullet != null ? ' ${bulletColor.wrap(bullet)}' : '';
 
     for (var i = 0; i < items.length; i++) {
       final isLast = i == items.length - 1;
-      final lineChar = isLast && !showLastLine ? teeRight : teeRight;
+      final lineChar = isLast ? bottomLeft : teeRight;
       final item = items[i];
 
       info('$prefix$lineChar$bulletStr $item');
 
-      if (!isLast || showLastLine) {
+      if (!isLast && showLinesBetweenItems) {
         info('$prefix$vertical');
       }
     }
