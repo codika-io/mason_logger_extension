@@ -44,6 +44,7 @@ extension LoggerExtensionQR on Logger {
           getBlockCharacter(topLeft, topRight, bottomLeft, bottomRight),
         );
       }
+      info('');
     }
     nextLine(count: spacingBottom);
   }

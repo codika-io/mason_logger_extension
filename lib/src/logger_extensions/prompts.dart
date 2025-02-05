@@ -152,7 +152,7 @@ extension LoggerExtensionPrompts on Logger {
 
     // We keep asking for a non-empty response if we didn't enable empty
     while (!enableEmpty && response.isEmpty) {
-      err('\nInput cannot be empty. Retry.\n');
+      infoIsolated('Input cannot be empty. Retry.'.toLightYellow);
       response = this.prompt(prompt, hidden: hideInput);
     }
 

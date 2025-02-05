@@ -1,3 +1,18 @@
+# 0.1.5
+
+### Breaking Changes 🛠️
+
+- refactor!: rename `printTable` method to `table` for better consistency with Dart naming conventions
+
+### Features ✨
+
+- feat: add customizable border parameter to `table` method
+- feat: add spacing parameters to QR code display (`spacingTop` and `spacingBottom`)
+
+### Bug Fixes 🐛
+
+- fix: correct QR code display by properly adding line breaks between rows
+
 # 0.1.4
 
 ### Breaking Changes 🛠️

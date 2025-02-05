@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:mason/mason.dart';
+import 'package:mason_logger_extension/mason_logger_extension.dart';
 
 /// Defines the alignment options for table content.
 ///
@@ -53,6 +54,7 @@ extension LoggerExtensionTable on Logger {
   /// [headerColors] Optional colors for each header
   /// [columnAlignments] Optional alignment settings for each column
   /// [contentPadding] Number of spaces to pad content (defaults to 2)
+  /// [border] The border style to use for the table
   ///
   /// Throws [AssertionError] if:
   /// * Column widths length doesn't match headers length
@@ -64,6 +66,7 @@ extension LoggerExtensionTable on Logger {
     List<AnsiCode>? headerColors,
     List<TableContentAlign>? columnAlignments,
     int contentPadding = 2,
+    LoggerBorderStyle borderStyle = LoggerBorderStyle.rounded,
   }) {
     assert(
       columnWidths == null || headers.length == columnWidths.length,
@@ -91,18 +94,19 @@ extension LoggerExtensionTable on Logger {
       }
     }
 
-    // Box drawing characters
-    const topLeft = '╭';
-    const topRight = '╮';
-    const bottomLeft = '╰';
-    const bottomRight = '╯';
-    const horizontal = '─';
-    const vertical = '│';
-    const teeDown = '┬';
-    const teeUp = '┴';
-    const teeRight = '├';
-    const teeLeft = '┤';
-    const cross = '┼';
+    // Get border characters from LoggerBorder
+    final topLeft = LoggerBorder.getChar(borderStyle, BorderPart.topLeft);
+    final topRight = LoggerBorder.getChar(borderStyle, BorderPart.topRight);
+    final bottomLeft = LoggerBorder.getChar(borderStyle, BorderPart.bottomLeft);
+    final bottomRight =
+        LoggerBorder.getChar(borderStyle, BorderPart.bottomRight);
+    final horizontal = LoggerBorder.getChar(borderStyle, BorderPart.horizontal);
+    final vertical = LoggerBorder.getChar(borderStyle, BorderPart.vertical);
+    final teeDown = LoggerBorder.getChar(borderStyle, BorderPart.teeDown);
+    final teeUp = LoggerBorder.getChar(borderStyle, BorderPart.teeUp);
+    final teeRight = LoggerBorder.getChar(borderStyle, BorderPart.teeRight);
+    final teeLeft = LoggerBorder.getChar(borderStyle, BorderPart.teeLeft);
+    final cross = LoggerBorder.getChar(borderStyle, BorderPart.cross);
 
     // Create horizontal lines
     final topLine =
