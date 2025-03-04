@@ -1,0 +1,93 @@
+import 'package:mason/mason.dart';
+import 'package:mason_logger_extension/mason_logger_extension.dart';
+
+extension LoggerExtensionExample on Logger {
+  void codikaLoggerExtensionExample() {
+    // Basic logging with checkmarks and x-marks
+    info('\n1. Basic Logging Examples:'.toLink);
+    checkmark('Task completed successfully');
+    xmark('Task failed');
+    nextLine();
+
+    // Frames for important sections
+    info('2. Frames Examples:'.toLink);
+    frame('Configuration Settings');
+    frame('Database Options');
+
+    // Tables for structured data
+    info('\n3. Table Example:'.toLink);
+    table(
+      headers: ['Name', 'Status', 'Priority'],
+      rows: [
+        ['Task 1', 'Complete'.toLightGreen, 'High'.toLightRed],
+        ['Task 2', 'Pending'.toLightYellow, 'Medium'.toLightBlue],
+        ['Task 3', 'In Progress'.toLightCyan, 'Low'.toLightMagenta],
+      ],
+      headerColors: [cyan, cyan, cyan],
+      columnAlignments: [
+        TableContentAlign.left,
+        TableContentAlign.center,
+        TableContentAlign.right,
+      ],
+    );
+
+    // Lists with bullets and anchors
+    info('\n4. Lists Examples:'.toLink);
+    listBullets(
+      ['First item', 'Second item', 'Third item'],
+      bulletColor: cyan,
+    );
+    nextLine();
+    listAnchors(
+      ['Step 1: Initialize', 'Step 2: Configure', 'Step 3: Run'],
+      style: LoggerBorderStyle.rounded,
+    );
+
+    // QR Code generation
+    info('\n5. QR Code Example:'.toLink);
+    qrCode('https://github.com/codika-io/mason_logger_extension');
+
+    // Interactive prompts (commented out as they require user input)
+    info('\n6. Prompts Examples:'.toLink);
+    // Uncomment to try interactive features:
+    /*
+  final name = logger.askForString('What is your name?');
+  final age = logger.askForString('How old are you?');
+  final likesCoding = logger.askForBool('Do you like coding?');
+  final bio = logger.askForMultilineString('Tell us about yourself:');
+  final favoriteColor = logger.askForEnum(
+    'Choose your favorite color:',
+    ['Red', 'Blue', 'Green', 'Yellow'],
+  );
+  */
+
+    // String extensions for colors and formatting
+    info('\n7. String Formatting Examples:'.toLink);
+    info('This is a success message'.toLightGreen);
+    info('This is an error message'.toLightRed);
+    info('This is a warning message'.toLightYellow);
+    info('Visit our website'.toLink);
+
+    // Prompt styling
+    info('\n8. Prompt Styling Example:'.toLink);
+    info('Are you sure?'.questionMark());
+    info('Continue?'.questionMark(symbol: '❓', color: cyan));
+
+    // Different border styles
+    info('\n9. Border Styles Example:'.toLink);
+    frame(
+      'Sharp Border',
+      style: LoggerBorderStyle.sharp,
+      color: lightGreen,
+    );
+    frame(
+      'Normal Border',
+      style: LoggerBorderStyle.normal,
+      color: lightBlue,
+    );
+    frame(
+      'Rounded Border',
+      color: lightMagenta,
+    );
+  }
+}

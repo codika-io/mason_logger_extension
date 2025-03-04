@@ -1,3 +1,11 @@
+# 0.1.7
+
+### Features ✨
+
+- feat: add new text style extensions (`toBold`, `toItalic`, `toUnderlined`, `toBlink`, `toDim`, `toReverse`)
+- feat: add new formatting utilities (`toBox`, `toIndentedBlock`)
+- feat: add new status indicators (`toCrossMarked`, `toWarning`, `toInfo`, `toSuccess`, `toError`)
+
 # 0.1.6
 
 - refactor!: rename `printTable` method to `table` for better consistency with Dart naming conventions
@@ -29,7 +37,10 @@
 - refactor!: rename functions to follow native Dart naming conventions
 - refactor!: remove imposed frame types
 
-# 0.1.3
+# 0.1.3Hey! Thanks for connecting - my post about Codika went viral but honestly not many people added me as a contact, so I guess you're really interested in what we're building! What caught your attention about it?
+
+We've got an amazing Discord community for Flutter devs starting up: <https://discord.gg/SqDVTEkH>
+Let me know if you have any questions!
 
 ### Documentation 📝
 

@@ -2,6 +2,7 @@
 library;
 
 export 'src/constants/border_library.dart';
+export 'src/example/example.dart';
 export 'src/logger_extensions/base.dart';
 export 'src/logger_extensions/frames.dart';
 export 'src/logger_extensions/lists.dart';
