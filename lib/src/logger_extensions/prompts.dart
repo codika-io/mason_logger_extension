@@ -99,6 +99,9 @@ extension LoggerExtensionPrompts on Logger {
       effectivePrompt = effectivePrompt.padRight(minQuestionLength);
     }
 
+    // Add a space after the prompt
+    effectivePrompt += ' ';
+
     final defaultStr = defaultValue != null ? (defaultValue ? 'Y' : 'N') : null;
     final response = promptWithDefault(
       effectivePrompt,

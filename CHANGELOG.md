@@ -1,3 +1,10 @@
+# 0.1.8
+
+### Features ✨
+
+- feat: add `dynamicLength` parameter to `frame` method to allow content-based width
+- feat: add `innerPadding` parameter to `frame` method to control spacing between content and borders
+
 # 0.1.7
 
 ### Features ✨

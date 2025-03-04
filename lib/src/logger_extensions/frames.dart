@@ -94,6 +94,8 @@ extension LoggerExtensionFrames on Logger {
   /// * [title] - The text to display in the frame
   /// * [centered] - Whether to center the title text (default: true)
   /// * [length] - The total width of the frame (default: 80)
+  /// * [dynamicLength] - If true, frame width will adjust to content (default: false)
+  /// * [innerPadding] - Number of spaces between content and frame (default: 1)
   /// * [style] - The border style to use (default: rounded)
   /// * [linesBefore] - Number of blank lines before the frame (default: 2)
   /// * [linesAfter] - Number of blank lines after the frame (default: 1)
@@ -102,6 +104,8 @@ extension LoggerExtensionFrames on Logger {
     String title, {
     bool centered = true,
     int length = 80,
+    bool dynamicLength = false,
+    int innerPadding = 1,
     LoggerBorderStyle style = LoggerBorderStyle.rounded,
     int linesBefore = 2,
     int linesAfter = 1,
@@ -114,20 +118,26 @@ extension LoggerExtensionFrames on Logger {
     final horizontal = LoggerBorder.getChar(style, BorderPart.horizontal);
     final vertical = LoggerBorder.getChar(style, BorderPart.vertical);
 
+    // Calculate content width
+    final contentWidth = dynamicLength
+        ? title.length + (innerPadding * 2)
+        : length - 2; // Subtract 2 for left and right borders
+
     // Calculate title positioning
     final titleLength = title.length;
-    final contentWidth = length - 2; // Subtract 2 for left and right borders
     String titleLine;
 
-    if (centered) {
+    if (centered && !dynamicLength) {
       final padding = (contentWidth - titleLength) ~/ 2;
       titleLine = ' ' * padding + title;
       // Add extra padding if needed to reach full length
       titleLine = titleLine.padRight(contentWidth);
     } else {
-      // For non-centered, add a single space before the title
-      titleLine = ' $title';
-      titleLine = titleLine.padRight(contentWidth);
+      // For dynamic length or non-centered, add inner padding
+      titleLine = ' ' * innerPadding + title + ' ' * innerPadding;
+      if (!dynamicLength) {
+        titleLine = titleLine.padRight(contentWidth);
+      }
     }
 
     // Print the box with extra spacing for emphasis
