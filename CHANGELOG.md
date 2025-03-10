@@ -1,3 +1,10 @@
+# 0.2.0
+
+### Breaking Changes 🛠️
+
+- refactor!: rename `LoggerBorderStyle.sharp` to `LoggerBorderStyle.doubled` for better clarity
+- feat!: add new border style `LoggerBorderStyle.heavy` for bold/thick borders
+
 # 0.1.8
 
 ### Features ✨

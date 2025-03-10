@@ -2,18 +2,22 @@
 ///
 /// This enum provides different border styles that can be used when drawing
 /// boxes, tables, or frames in console output:
-/// * [sharp] - Uses double-line box drawing characters with sharp corners (╔═╗)
+/// * [doubled] - Uses doubled-line box drawing characters with sharp corners (╔═╗)
 /// * [normal] - Uses single-line box drawing characters with sharp corners (┌─┐)
 /// * [rounded] - Uses single-line box drawing characters with rounded corners (╭─╮)
+/// * [heavy] - Uses bold/thick box drawing characters with sharp corners (┏━┓)
 enum LoggerBorderStyle {
-  /// Sharp border style
-  sharp,
+  /// Double-line border style
+  doubled,
 
   /// Normal border style
   normal,
 
   /// Rounded border style
-  rounded;
+  rounded,
+
+  /// Heavy border style
+  heavy;
 }
 
 /// Defines the different components that make up a border in console output.
@@ -81,7 +85,7 @@ enum BorderPart {
 class LoggerBorder {
   // Box drawing characters
   static final Map<LoggerBorderStyle, Map<BorderPart, String>> _borderChars = {
-    LoggerBorderStyle.sharp: {
+    LoggerBorderStyle.doubled: {
       BorderPart.topLeft: '╔',
       BorderPart.topRight: '╗',
       BorderPart.bottomLeft: '╚',
@@ -120,21 +124,38 @@ class LoggerBorder {
       BorderPart.teeUp: '┴',
       BorderPart.cross: '┼',
     },
+    LoggerBorderStyle.heavy: {
+      BorderPart.topLeft: '┏',
+      BorderPart.topRight: '┓',
+      BorderPart.bottomLeft: '┗',
+      BorderPart.bottomRight: '┛',
+      BorderPart.horizontal: '━',
+      BorderPart.vertical: '┃',
+      BorderPart.teeRight: '┣',
+      BorderPart.teeLeft: '┫',
+      BorderPart.teeDown: '┳',
+      BorderPart.teeUp: '┻',
+      BorderPart.cross: '╋',
+    },
   };
 
   /// Returns the border character for the given [style] and [part].
   ///
   /// Parameters:
-  /// * [style] - The desired border style (sharp, normal, or rounded)
+  /// * [style] - The desired border style (doubled, normal, rounded, or heavy)
   /// * [part] - The specific part of the border to retrieve
   ///
   /// Returns an empty string if the style or part is not found.
   ///
   /// Example:
   /// ```dart
-  /// final topLeft = LoggerBorder.getChar(LoggerBorderStyle.sharp, BorderPart.topLeft); // Returns '╔'
+  /// final topLeft = LoggerBorder.getChar(LoggerBorderStyle.doubled, BorderPart.topLeft); // Returns '╔'
   /// ```
   static String getChar(LoggerBorderStyle style, BorderPart part) {
+    // Handle deprecated sharp style by mapping it to doubled
+    if (style == LoggerBorderStyle.doubled) {
+      return getChar(LoggerBorderStyle.doubled, part);
+    }
     return _borderChars[style]?[part] ?? '';
   }
 }

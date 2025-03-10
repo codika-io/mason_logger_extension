@@ -77,7 +77,7 @@ extension LoggerExtensionExample on Logger {
     info('\n9. Border Styles Example:'.toLink);
     frame(
       'Sharp Border',
-      style: LoggerBorderStyle.sharp,
+      style: LoggerBorderStyle.doubled,
       color: lightGreen,
     );
     frame(
@@ -88,6 +88,11 @@ extension LoggerExtensionExample on Logger {
     frame(
       'Rounded Border',
       color: lightMagenta,
+    );
+    frame(
+      'Heavy Border',
+      style: LoggerBorderStyle.heavy,
+      color: lightRed,
     );
   }
 }

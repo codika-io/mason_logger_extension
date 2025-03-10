@@ -18,7 +18,7 @@ extension LoggerExtensionFrames on Logger {
   /// ```dart
   /// logger.sectionTitle('Configuration');
   /// ╔══════════════════════════════════╗
-  /// ║          Configuration           ║
+  /// ║          Configuration            ║
   /// ╚══════════════════════════════════╝
   /// ```
   ///
@@ -29,7 +29,7 @@ extension LoggerExtensionFrames on Logger {
     frame(
       title,
       length: length,
-      style: LoggerBorderStyle.sharp,
+      style: LoggerBorderStyle.doubled,
       color: cyan,
     );
   }
@@ -41,7 +41,7 @@ extension LoggerExtensionFrames on Logger {
   /// Example:
   /// ```dart
   /// logger.secondaryTitle('Details');
-  /// ┌─ Details ───────────────────────┐
+  /// ┌─ Details ────────────────────────┐
   /// └──────────────────────────────────┘
   /// ```
   ///
@@ -68,7 +68,7 @@ extension LoggerExtensionFrames on Logger {
   /// logger.errorSection('Failed to connect to the server');
   /// ╔══════════ An Error Occurred ════════════╗
   /// ║  Failed to connect to the server        ║
-  /// ╚════════════════════════════════════════╝
+  /// ╚═════════════════════════════════════════╝
   /// ```
   ///
   /// Parameters:
@@ -78,7 +78,7 @@ extension LoggerExtensionFrames on Logger {
     frame(
       'An Error Occurred',
       length: length,
-      style: LoggerBorderStyle.sharp,
+      style: LoggerBorderStyle.doubled,
       color: red,
     );
     info(red.wrap(message));
