@@ -1,3 +1,9 @@
+# 0.2.1
+
+### Bug Fixes 🐛
+
+- fix: resolve stack overflow in `LoggerBorder.getChar()` by removing recursive call for doubled border style
+
 # 0.2.0
 
 ### Breaking Changes 🛠️

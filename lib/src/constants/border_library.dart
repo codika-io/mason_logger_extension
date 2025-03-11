@@ -152,10 +152,6 @@ class LoggerBorder {
   /// final topLeft = LoggerBorder.getChar(LoggerBorderStyle.doubled, BorderPart.topLeft); // Returns '╔'
   /// ```
   static String getChar(LoggerBorderStyle style, BorderPart part) {
-    // Handle deprecated sharp style by mapping it to doubled
-    if (style == LoggerBorderStyle.doubled) {
-      return getChar(LoggerBorderStyle.doubled, part);
-    }
     return _borderChars[style]?[part] ?? '';
   }
 }
