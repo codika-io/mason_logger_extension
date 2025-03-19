@@ -65,7 +65,7 @@ extension LoggerExtensionTexts on Logger {
     bool enableHyphenation = false,
     bool autoBullets = true,
     bool autowrap = true,
-    AnsiCode? color,
+    AnsiCode? color = darkGray,
   }) {
     if (text.isEmpty) {
       return;

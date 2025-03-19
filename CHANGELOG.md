@@ -1,3 +1,9 @@
+# 0.3.1
+
+### Features ✨
+
+- feat: made default color for paragraph function dark gray
+
 # 0.3.0
 
 ### Features ✨
