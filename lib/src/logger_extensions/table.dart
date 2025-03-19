@@ -71,7 +71,7 @@ extension LoggerExtensionTable on Logger {
     List<TableContentAlign>? columnAlignments,
     int contentPadding = 2,
     LoggerBorderStyle borderStyle = LoggerBorderStyle.rounded,
-    AnsiCode borderColor = lightGray,
+    AnsiCode borderColor = darkGray,
     String? title,
     bool stretchTitle = false,
     int titlePadding = 4,
@@ -159,7 +159,7 @@ extension LoggerExtensionTable on Logger {
         // When stretched, the bottom of the title box becomes the top of the table
         // Use tee junctions to connect with table columns
         final titleBottomLine =
-            '$teeDown${_createIntersectedLine(effectiveColumnWidths, horizontal, teeDown)}$teeDown';
+            '$teeRight${_createIntersectedLine(effectiveColumnWidths, horizontal, teeDown)}$teeLeft';
 
         // Skip printing the table top line since the title bottom serves as the table top
         skipTableTopLine = true;
@@ -191,7 +191,31 @@ extension LoggerExtensionTable on Logger {
           ..info('$centeringPadding$topLeft$titleHorizontalLine$topRight')
           ..info('$centeringPadding$vertical$paddedTitle$vertical');
 
-        // No special top line integration - we'll use the regular table top line
+        // Create a modified top line where the title's vertical borders intersect with crosses
+        final leftCrossPosition = leftSpaces;
+        final rightCrossPosition = leftSpaces + titleBoxWidth - 1;
+
+        // Start with the regular top line and modify it
+        final chars = tableTopLine.split('');
+
+        // Only modify if the intersections would be within the table width
+        if (leftCrossPosition > 0 && leftCrossPosition < chars.length) {
+          // If the character at this position is teeDown, we should use cross
+          // Otherwise, we use teeUp to indicate a line coming from above but not below
+          final currentChar = chars[leftCrossPosition];
+          chars[leftCrossPosition] = currentChar == teeDown ? cross : teeUp;
+        }
+        if (rightCrossPosition > 0 && rightCrossPosition < chars.length) {
+          // Same logic for the right intersection
+          final currentChar = chars[rightCrossPosition];
+          chars[rightCrossPosition] = currentChar == teeDown ? cross : teeUp;
+        }
+
+        final modifiedTopLine = chars.join();
+
+        // Replace the regular top line
+        skipTableTopLine = true;
+        info(modifiedTopLine);
       }
     }
 

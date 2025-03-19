@@ -1,3 +1,12 @@
+# 0.2.3
+
+### Bug Fixes 🐛
+
+- fix: correct table title connections for both stretched and non-stretched titles
+  - Use proper tee characters (teeRight and teeLeft) for stretched title bottom borders
+  - Use appropriate intersection characters (cross or teeUp) where title vertical borders meet table top line
+  - Fix visual representation when title box connects with table borders
+
 # 0.2.2
 
 ### Features ✨
