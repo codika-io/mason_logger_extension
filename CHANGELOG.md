@@ -1,3 +1,15 @@
+# 0.3.0
+
+### Features ✨
+
+- feat: add new paragraph function for advanced text formatting
+  - Provides sophisticated text wrapping with support for ANSI escape sequences
+  - Handles bullet points with proper indentation and alignment
+  - Preserves paragraph structure with customizable separations
+  - Supports text alignment (left, right, center) and custom indentation
+  - Includes color parameter that preserves existing text formatting
+  - Enables hyphenation for long words and proper handling of special characters
+
 # 0.2.8
 
 ### Features ✨
