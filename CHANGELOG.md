@@ -1,3 +1,17 @@
+# 0.2.2
+
+### Features ✨
+
+- feat: add border color customization to table component
+- feat: add title support to tables with configurable options
+  - `stretchTitle` parameter controls whether title spans full table width
+  - `titlePadding` parameter controls spacing around title text
+- feat: create new titled separator component
+  - Supports left, center, and right alignment
+  - Shows a title box connected to a horizontal separator line
+  - Uses proper tee connections where title box meets separator line
+  - Customizable length, padding, border style, and color
+
 # 0.2.1
 
 ### Bug Fixes 🐛

@@ -9,6 +9,7 @@ export 'src/logger_extensions/lists.dart';
 export 'src/logger_extensions/prompts.dart';
 export 'src/logger_extensions/qr_code.dart';
 export 'src/logger_extensions/table.dart';
+export 'src/logger_extensions/titled_separator.dart';
 export 'src/mason_logger_extension.dart';
 export 'src/string_extensions/appender.dart';
 export 'src/string_extensions/colors.dart';

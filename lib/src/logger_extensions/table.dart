@@ -25,6 +25,8 @@ enum TableContentAlign {
 /// * Text alignment options
 /// * Colored headers
 /// * Automatic content padding
+/// * Optional title
+/// * Customizable border color
 extension LoggerExtensionTable on Logger {
   /// Prints a formatted table with the given headers and rows.
   ///
@@ -45,6 +47,8 @@ extension LoggerExtensionTable on Logger {
   ///     TableContentAlign.right,
   ///     TableContentAlign.center,
   ///   ],
+  ///   title: 'User Information',
+  ///   borderColor: lightGray,
   /// );
   /// ```
   ///
@@ -55,10 +59,10 @@ extension LoggerExtensionTable on Logger {
   /// [columnAlignments] Optional alignment settings for each column
   /// [contentPadding] Number of spaces to pad content (defaults to 2)
   /// [border] The border style to use for the table
-  ///
-  /// Throws [AssertionError] if:
-  /// * Column widths length doesn't match headers length
-  /// * Any row has a different number of columns than headers
+  /// [borderColor] Optional color for the table border (defaults to light gray)
+  /// [title] Optional title displayed above the table
+  /// [stretchTitle] Whether the title box should stretch to full table width (defaults to false)
+  /// [titlePadding] Number of spaces to pad the title (defaults to 4, used when stretchTitle is false)
   void table({
     required List<String> headers,
     required List<List<String>> rows,
@@ -67,6 +71,10 @@ extension LoggerExtensionTable on Logger {
     List<TableContentAlign>? columnAlignments,
     int contentPadding = 2,
     LoggerBorderStyle borderStyle = LoggerBorderStyle.rounded,
+    AnsiCode borderColor = lightGray,
+    String? title,
+    bool stretchTitle = false,
+    int titlePadding = 4,
   }) {
     assert(
       columnWidths == null || headers.length == columnWidths.length,
@@ -95,26 +103,97 @@ extension LoggerExtensionTable on Logger {
     }
 
     // Get border characters from LoggerBorder
-    final topLeft = LoggerBorder.getChar(borderStyle, BorderPart.topLeft);
-    final topRight = LoggerBorder.getChar(borderStyle, BorderPart.topRight);
-    final bottomLeft = LoggerBorder.getChar(borderStyle, BorderPart.bottomLeft);
-    final bottomRight =
-        LoggerBorder.getChar(borderStyle, BorderPart.bottomRight);
-    final horizontal = LoggerBorder.getChar(borderStyle, BorderPart.horizontal);
-    final vertical = LoggerBorder.getChar(borderStyle, BorderPart.vertical);
-    final teeDown = LoggerBorder.getChar(borderStyle, BorderPart.teeDown);
-    final teeUp = LoggerBorder.getChar(borderStyle, BorderPart.teeUp);
-    final teeRight = LoggerBorder.getChar(borderStyle, BorderPart.teeRight);
-    final teeLeft = LoggerBorder.getChar(borderStyle, BorderPart.teeLeft);
-    final cross = LoggerBorder.getChar(borderStyle, BorderPart.cross);
+    final topLeft =
+        borderColor.wrap(LoggerBorder.getChar(borderStyle, BorderPart.topLeft));
+    final topRight = borderColor
+        .wrap(LoggerBorder.getChar(borderStyle, BorderPart.topRight));
+    final bottomLeft = borderColor
+        .wrap(LoggerBorder.getChar(borderStyle, BorderPart.bottomLeft));
+    final bottomRight = borderColor
+        .wrap(LoggerBorder.getChar(borderStyle, BorderPart.bottomRight));
+    final horizontal = borderColor
+        .wrap(LoggerBorder.getChar(borderStyle, BorderPart.horizontal));
+    final vertical = borderColor
+        .wrap(LoggerBorder.getChar(borderStyle, BorderPart.vertical));
+    final teeDown =
+        borderColor.wrap(LoggerBorder.getChar(borderStyle, BorderPart.teeDown));
+    final teeUp =
+        borderColor.wrap(LoggerBorder.getChar(borderStyle, BorderPart.teeUp));
+    final teeRight = borderColor
+        .wrap(LoggerBorder.getChar(borderStyle, BorderPart.teeRight));
+    final teeLeft =
+        borderColor.wrap(LoggerBorder.getChar(borderStyle, BorderPart.teeLeft));
+    final cross =
+        borderColor.wrap(LoggerBorder.getChar(borderStyle, BorderPart.cross));
 
-    // Create horizontal lines
+    // Create standard horizontal lines
     final topLine =
-        '$topLeft${_createIntersectedLine(effectiveColumnWidths, horizontal, teeDown)}$topRight';
+        '${topLeft!}${_createIntersectedLine(effectiveColumnWidths, horizontal!, teeDown!)}${topRight!}';
     final middleLine =
-        '$teeRight${_createIntersectedLine(effectiveColumnWidths, horizontal, cross)}$teeLeft';
+        '${teeRight!}${_createIntersectedLine(effectiveColumnWidths, horizontal, cross!)}${teeLeft!}';
     final bottomLine =
-        '$bottomLeft${_createIntersectedLine(effectiveColumnWidths, horizontal, teeUp)}$bottomRight';
+        '${bottomLeft!}${_createIntersectedLine(effectiveColumnWidths, horizontal, teeUp!)}${bottomRight!}';
+
+    // Calculate total table width
+    final totalWidth = effectiveColumnWidths.fold<int>(
+          0,
+          (prev, width) => prev + width,
+        ) +
+        // Add spacing for vertical borders (one at start, one at end, one between each column)
+        (effectiveColumnWidths.length + 1) * 3 -
+        2; // Adjust for the border characters counted twice in corners
+
+    // Variables for the table top line - will be modified if title is present
+    final tableTopLine = topLine;
+    var skipTableTopLine = false;
+
+    // Handle title if provided
+    if (title != null) {
+      if (stretchTitle) {
+        // For stretched titles, make the title box exactly the same width as the table
+        // The full width needed for the title content
+        final titleBoxWidth = totalWidth;
+        final titleHorizontalLine =
+            horizontal * (titleBoxWidth - 2); // Subtract 2 for the corners
+
+        // When stretched, the bottom of the title box becomes the top of the table
+        // Use tee junctions to connect with table columns
+        final titleBottomLine =
+            '$teeDown${_createIntersectedLine(effectiveColumnWidths, horizontal, teeDown)}$teeDown';
+
+        // Skip printing the table top line since the title bottom serves as the table top
+        skipTableTopLine = true;
+
+        this
+          ..info('$topLeft$titleHorizontalLine$topRight')
+          ..info(
+            '${vertical!} ${_padCenter(title, titleBoxWidth - 4)} $vertical',
+          )
+          ..info(titleBottomLine);
+      } else {
+        // For non-stretched titles, create a small box just around the title
+        // and center it above the table
+        final titleTextWidth = title.length + titlePadding;
+        final titleBoxWidth =
+            titleTextWidth + 2; // Add 2 for the vertical borders
+        final titleHorizontalLine = horizontal * titleTextWidth;
+
+        // Calculate centering offset to perfectly align the title box with the table
+        final leftSpaces = (totalWidth - titleBoxWidth) ~/ 2;
+        final centeringPadding = ' ' * leftSpaces;
+
+        // Calculate the exact space needed for the centered title text
+        // This ensures we have equal padding on both sides
+        final paddedTitle = _padCenter(title, titleTextWidth);
+
+        // Print the centered, compact title box
+        this
+          ..info('$centeringPadding$topLeft$titleHorizontalLine$topRight')
+          ..info('$centeringPadding$vertical$paddedTitle$vertical');
+
+        // No special top line integration - we'll use the regular table top line
+      }
+    }
 
     // Style headers with provided colors or default to cyan
     final effectiveColors = headerColors ?? List.filled(headers.length, cyan);
@@ -127,10 +206,12 @@ extension LoggerExtensionTable on Logger {
         .toList();
 
     // Print table
+    if (!skipTableTopLine) {
+      info(tableTopLine);
+    }
     this
-      ..info(topLine)
       ..info(
-        '$vertical ${styledHeaders.asMap().entries.map((e) {
+        '${vertical!} ${styledHeaders.asMap().entries.map((e) {
           final text = e.value!;
           final width = effectiveColumnWidths[e.key];
           return _padText(text, width, effectiveAlignments[e.key]);

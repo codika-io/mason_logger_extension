@@ -30,9 +30,41 @@ extension LoggerExtensionExample on Logger {
         TableContentAlign.right,
       ],
     );
+    table(
+      headers: ['Name', 'Status', 'Priority'],
+      rows: [
+        ['Task 1', 'Complete'.toLightGreen, 'High'.toLightRed],
+        ['Task 2', 'Pending'.toLightYellow, 'Medium'.toLightBlue],
+        ['Task 3', 'In Progress'.toLightCyan, 'Low'.toLightMagenta],
+      ],
+      title: 'Task List',
+      stretchTitle: true,
+    );
+    table(
+      headers: ['Name', 'Status', 'Priority'],
+      rows: [
+        ['Task 1', 'Complete'.toLightGreen, 'High'.toLightRed],
+        ['Task 2', 'Pending'.toLightYellow, 'Medium'.toLightBlue],
+        ['Task 3', 'In Progress'.toLightCyan, 'Low'.toLightMagenta],
+      ],
+      title: 'Task List',
+    );
+
+    info('\n4. Titled Separator Example:'.toLink);
+    titledSeparator(
+      'Center Title ',
+    );
+    titledSeparator(
+      'Left Title',
+      align: TableContentAlign.left,
+    );
+    titledSeparator(
+      'Right Title',
+      align: TableContentAlign.right,
+    );
 
     // Lists with bullets and anchors
-    info('\n4. Lists Examples:'.toLink);
+    info('\n5. Lists Examples:'.toLink);
     listBullets(
       ['First item', 'Second item', 'Third item'],
       bulletColor: cyan,
@@ -44,11 +76,11 @@ extension LoggerExtensionExample on Logger {
     );
 
     // QR Code generation
-    info('\n5. QR Code Example:'.toLink);
+    info('\n6. QR Code Example:'.toLink);
     qrCode('https://github.com/codika-io/mason_logger_extension');
 
     // Interactive prompts (commented out as they require user input)
-    info('\n6. Prompts Examples:'.toLink);
+    info('\n7. Prompts Examples:'.toLink);
     // Uncomment to try interactive features:
     /*
   final name = logger.askForString('What is your name?');
@@ -62,19 +94,19 @@ extension LoggerExtensionExample on Logger {
   */
 
     // String extensions for colors and formatting
-    info('\n7. String Formatting Examples:'.toLink);
+    info('\n8. String Formatting Examples:'.toLink);
     info('This is a success message'.toLightGreen);
     info('This is an error message'.toLightRed);
     info('This is a warning message'.toLightYellow);
     info('Visit our website'.toLink);
 
     // Prompt styling
-    info('\n8. Prompt Styling Example:'.toLink);
+    info('\n9. Prompt Styling Example:'.toLink);
     info('Are you sure?'.questionMark());
     info('Continue?'.questionMark(symbol: '❓', color: cyan));
 
     // Different border styles
-    info('\n9. Border Styles Example:'.toLink);
+    info('\n10. Border Styles Example:'.toLink);
     frame(
       'Sharp Border',
       style: LoggerBorderStyle.doubled,
