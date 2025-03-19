@@ -92,10 +92,9 @@ extension LoggerExtensionTable on Logger {
     for (var i = 0; i < headers.length; i++) {
       if (effectiveColumnWidths[i] <= 0) {
         // Get max content length for this column
-        var maxLength = headers[i].length;
+        var maxLength = headers[i].visibleLength;
         for (final row in rows) {
-          final contentLength =
-              row[i].replaceAll(RegExp(r'\x1B\[[0-9;]*m'), '').length;
+          final contentLength = row[i].visibleLength;
           maxLength = max(maxLength, contentLength);
         }
         effectiveColumnWidths[i] = maxLength + contentPadding;
@@ -173,7 +172,9 @@ extension LoggerExtensionTable on Logger {
       } else {
         // For non-stretched titles, create a small box just around the title
         // and center it above the table
-        final titleTextWidth = title.length + titlePadding;
+        // Calculate visible title length by stripping ANSI escape sequences
+        final titleVisibleLength = title.visibleLength;
+        final titleTextWidth = titleVisibleLength + titlePadding;
         final titleBoxWidth =
             titleTextWidth + 2; // Add 2 for the vertical borders
         final titleHorizontalLine = horizontal * titleTextWidth;
@@ -191,31 +192,82 @@ extension LoggerExtensionTable on Logger {
           ..info('$centeringPadding$topLeft$titleHorizontalLine$topRight')
           ..info('$centeringPadding$vertical$paddedTitle$vertical');
 
-        // Create a modified top line where the title's vertical borders intersect with crosses
-        final leftCrossPosition = leftSpaces;
-        final rightCrossPosition = leftSpaces + titleBoxWidth - 1;
+        // The simplest approach: create a completely new table top line
+        // without using ANSI-colored components from the original line
 
-        // Start with the regular top line and modify it
-        final chars = tableTopLine.split('');
+        // Get plain characters directly from the LoggerBorder
+        final plainTopLeft =
+            LoggerBorder.getChar(borderStyle, BorderPart.topLeft);
+        final plainTopRight =
+            LoggerBorder.getChar(borderStyle, BorderPart.topRight);
+        final plainHorizontal =
+            LoggerBorder.getChar(borderStyle, BorderPart.horizontal);
+        final plainTeeDown =
+            LoggerBorder.getChar(borderStyle, BorderPart.teeDown);
+        final plainTeeUp = LoggerBorder.getChar(borderStyle, BorderPart.teeUp);
+        final plainCross = LoggerBorder.getChar(borderStyle, BorderPart.cross);
 
-        // Only modify if the intersections would be within the table width
-        if (leftCrossPosition > 0 && leftCrossPosition < chars.length) {
-          // If the character at this position is teeDown, we should use cross
-          // Otherwise, we use teeUp to indicate a line coming from above but not below
-          final currentChar = chars[leftCrossPosition];
-          chars[leftCrossPosition] = currentChar == teeDown ? cross : teeUp;
+        // Calculate the positions where the title connects with the table
+        // The left connection should be exactly under the left vertical border of the title box
+        // The right connection should be exactly under the right vertical border
+        // No offset adjustments needed - use exact positions
+        final leftConnectPos = leftSpaces;
+        final rightConnectPos = leftSpaces + titleBoxWidth - 1;
+
+        // Build a plain uncolored top line first
+        final plainTopLine = StringBuffer();
+
+        // Add the top-left corner
+        plainTopLine.write(plainTopLeft);
+
+        // Add horizontal segments with proper connections
+        var columnStart = 0;
+        for (var i = 0; i < effectiveColumnWidths.length; i++) {
+          final columnWidth = effectiveColumnWidths[i] + 2; // +2 for padding
+
+          // For each position in this column
+          for (var j = 0; j < columnWidth; j++) {
+            final pos =
+                columnStart + j + 1; // +1 because we already wrote the corner
+
+            if (pos == leftConnectPos || pos == rightConnectPos) {
+              // Title connection points
+              plainTopLine.write(plainTeeUp);
+            } else {
+              // Regular horizontal
+              plainTopLine.write(plainHorizontal);
+            }
+          }
+
+          // Add column divider unless we're at the last column
+          if (i < effectiveColumnWidths.length - 1) {
+            final dividerPos = columnStart +
+                columnWidth +
+                1; // +1 for the corner we already wrote
+
+            if (dividerPos == leftConnectPos || dividerPos == rightConnectPos) {
+              // Title connection on divider
+              plainTopLine.write(plainCross);
+            } else {
+              // Regular divider
+              plainTopLine.write(plainTeeDown);
+            }
+
+            columnStart += columnWidth + 1; // +1 for the divider
+          } else {
+            columnStart += columnWidth;
+          }
         }
-        if (rightCrossPosition > 0 && rightCrossPosition < chars.length) {
-          // Same logic for the right intersection
-          final currentChar = chars[rightCrossPosition];
-          chars[rightCrossPosition] = currentChar == teeDown ? cross : teeUp;
-        }
 
-        final modifiedTopLine = chars.join();
+        // Add the top-right corner
+        plainTopLine.write(plainTopRight);
+
+        // Now color the entire line with the border color
+        final coloredTopLine = borderColor.wrap(plainTopLine.toString());
 
         // Replace the regular top line
         skipTableTopLine = true;
-        info(modifiedTopLine);
+        info(coloredTopLine);
       }
     }
 
@@ -281,7 +333,7 @@ extension LoggerExtensionTable on Logger {
   ///
   /// Accounts for ANSI color codes when calculating visible length.
   String _padLeft(String text, int width) {
-    final visibleLength = text.replaceAll(RegExp(r'\x1B\[[0-9;]*m'), '').length;
+    final visibleLength = text.visibleLength;
     final padding = width - visibleLength;
     return '${' ' * padding}$text';
   }
@@ -290,7 +342,7 @@ extension LoggerExtensionTable on Logger {
   ///
   /// Accounts for ANSI color codes when calculating visible length.
   String _padRight(String text, int width) {
-    final visibleLength = text.replaceAll(RegExp(r'\x1B\[[0-9;]*m'), '').length;
+    final visibleLength = text.visibleLength;
     final padding = width - visibleLength;
     return '$text${' ' * padding}';
   }
@@ -299,7 +351,7 @@ extension LoggerExtensionTable on Logger {
   ///
   /// Accounts for ANSI color codes when calculating visible length.
   String _padCenter(String text, int width) {
-    final visibleLength = text.replaceAll(RegExp(r'\x1B\[[0-9;]*m'), '').length;
+    final visibleLength = text.visibleLength;
     final padding = width - visibleLength;
     final left = padding ~/ 2;
     final right = padding - left;

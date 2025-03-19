@@ -1,3 +1,38 @@
+# 0.2.7
+
+### Features ✨
+
+- feat: add `encloseFreeSide` parameter to titled separator component
+  - Allows enclosing the free extremities of the titled separator with top corner characters
+  - Improves visual aesthetics for hierarchical UI elements
+  - Creates a more enclosed, refined appearance when multiple separators are used together
+
+# 0.2.6
+
+### Bug Fixes 🐛
+
+- fix: ensure title box connections align perfectly with the table
+  - Correctly account for position offsets by including the corner character in calculations
+  - Maintain proper vertical alignment between title box and table connections
+
+# 0.2.5
+
+### Bug Fixes 🐛
+
+- fix: correct the alignment of title box connections to tables
+  - Fix position calculation for title connection points by accounting for corner character
+  - Ensure title box vertical borders align perfectly with table connections
+
+# 0.2.4
+
+### Bug Fixes 🐛
+
+- fix: resolve issue with ANSI color codes breaking table title connections
+  - Fix problem where `[90m` color codes were visible in table borders
+  - Completely rebuild the top line with uncolored characters before applying color
+  - Ensure proper connections between non-stretched title box and main table
+  - Fix visual inconsistency between different border styles with titled tables
+
 # 0.2.3
 
 ### Bug Fixes 🐛
