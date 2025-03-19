@@ -11,6 +11,56 @@ extension LoggerStringExtensionColors on String {
   /// The text is also made bold.
   String get toLink => lightCyan.wrap('🔗 ${styleBold.wrap(this)}') ?? this;
 
+  /// Wraps the string in black ANSI color.
+  ///
+  /// Falls back to the original string if wrapping fails.
+  String get toBlack => black.wrap(this) ?? this;
+
+  /// Wraps the string in red ANSI color.
+  ///
+  /// Falls back to the original string if wrapping fails.
+  String get toRed => red.wrap(this) ?? this;
+
+  /// Wraps the string in green ANSI color.
+  ///
+  /// Falls back to the original string if wrapping fails.
+  String get toGreen => green.wrap(this) ?? this;
+
+  /// Wraps the string in yellow ANSI color.
+  ///
+  /// Falls back to the original string if wrapping fails.
+  String get toYellow => yellow.wrap(this) ?? this;
+
+  /// Wraps the string in blue ANSI color.
+  ///
+  /// Falls back to the original string if wrapping fails.
+  String get toBlue => blue.wrap(this) ?? this;
+
+  /// Wraps the string in magenta ANSI color.
+  ///
+  /// Falls back to the original string if wrapping fails.
+  String get toMagenta => magenta.wrap(this) ?? this;
+
+  /// Wraps the string in cyan ANSI color.
+  ///
+  /// Falls back to the original string if wrapping fails.
+  String get toCyan => cyan.wrap(this) ?? this;
+
+  /// Wraps the string in light gray ANSI color.
+  ///
+  /// Falls back to the original string if wrapping fails.
+  String get toLightGray => lightGray.wrap(this) ?? this;
+
+  /// Wraps the string in default foreground ANSI color.
+  ///
+  /// Falls back to the original string if wrapping fails.
+  String get toDefaultForeground => defaultForeground.wrap(this) ?? this;
+
+  /// Wraps the string in dark gray ANSI color.
+  ///
+  /// Falls back to the original string if wrapping fails.
+  String get toDarkGray => darkGray.wrap(this) ?? this;
+
   /// Wraps the string in light green ANSI color.
   ///
   /// Falls back to the original string if wrapping fails.
@@ -40,6 +90,11 @@ extension LoggerStringExtensionColors on String {
   ///
   /// Falls back to the original string if wrapping fails.
   String get toLightCyan => lightCyan.wrap(this) ?? this;
+
+  /// Wraps the string in white ANSI color.
+  ///
+  /// Falls back to the original string if wrapping fails.
+  String get toWhite => white.wrap(this) ?? this;
 
   /// Prefixes the string with a green checkmark (✓).
   ///
@@ -145,4 +200,96 @@ extension LoggerStringExtensionColors on String {
   /// 'Failed!'.toError; // Prints: ❌ Failed! in red
   /// ```
   String get toError => '❌ ${lightRed.wrap(this) ?? this}';
+}
+
+/// Extension methods for [String] to add ANSI background color formatting.
+///
+/// Provides convenient getters to wrap strings in various ANSI background color codes.
+extension LoggerStringExtensionBackgroundColors on String {
+  /// Wraps the string in black background ANSI color.
+  ///
+  /// Falls back to the original string if wrapping fails.
+  String get toBlackBackground => backgroundBlack.wrap(this) ?? this;
+
+  /// Wraps the string in red background ANSI color.
+  ///
+  /// Falls back to the original string if wrapping fails.
+  String get toRedBackground => backgroundRed.wrap(this) ?? this;
+
+  /// Wraps the string in green background ANSI color.
+  ///
+  /// Falls back to the original string if wrapping fails.
+  String get toGreenBackground => backgroundGreen.wrap(this) ?? this;
+
+  /// Wraps the string in yellow background ANSI color.
+  ///
+  /// Falls back to the original string if wrapping fails.
+  String get toYellowBackground => backgroundYellow.wrap(this) ?? this;
+
+  /// Wraps the string in blue background ANSI color.
+  ///
+  /// Falls back to the original string if wrapping fails.
+  String get toBlueBackground => backgroundBlue.wrap(this) ?? this;
+
+  /// Wraps the string in magenta background ANSI color.
+  ///
+  /// Falls back to the original string if wrapping fails.
+  String get toMagentaBackground => backgroundMagenta.wrap(this) ?? this;
+
+  /// Wraps the string in cyan background ANSI color.
+  ///
+  /// Falls back to the original string if wrapping fails.
+  String get toCyanBackground => backgroundCyan.wrap(this) ?? this;
+
+  /// Wraps the string in light gray background ANSI color.
+  ///
+  /// Falls back to the original string if wrapping fails.
+  String get toLightGrayBackground => backgroundLightGray.wrap(this) ?? this;
+
+  /// Wraps the string in default background ANSI color.
+  ///
+  /// Falls back to the original string if wrapping fails.
+  String get toDefaultBackground => backgroundDefault.wrap(this) ?? this;
+
+  /// Wraps the string in dark gray background ANSI color.
+  ///
+  /// Falls back to the original string if wrapping fails.
+  String get toDarkGrayBackground => backgroundDarkGray.wrap(this) ?? this;
+
+  /// Wraps the string in light red background ANSI color.
+  ///
+  /// Falls back to the original string if wrapping fails.
+  String get toLightRedBackground => backgroundLightRed.wrap(this) ?? this;
+
+  /// Wraps the string in light green background ANSI color.
+  ///
+  /// Falls back to the original string if wrapping fails.
+  String get toLightGreenBackground => backgroundLightGreen.wrap(this) ?? this;
+
+  /// Wraps the string in light yellow background ANSI color.
+  ///
+  /// Falls back to the original string if wrapping fails.
+  String get toLightYellowBackground =>
+      backgroundLightYellow.wrap(this) ?? this;
+
+  /// Wraps the string in light blue background ANSI color.
+  ///
+  /// Falls back to the original string if wrapping fails.
+  String get toLightBlueBackground => backgroundLightBlue.wrap(this) ?? this;
+
+  /// Wraps the string in light magenta background ANSI color.
+  ///
+  /// Falls back to the original string if wrapping fails.
+  String get toLightMagentaBackground =>
+      backgroundLightMagenta.wrap(this) ?? this;
+
+  /// Wraps the string in light cyan background ANSI color.
+  ///
+  /// Falls back to the original string if wrapping fails.
+  String get toLightCyanBackground => backgroundLightCyan.wrap(this) ?? this;
+
+  /// Wraps the string in white background ANSI color.
+  ///
+  /// Falls back to the original string if wrapping fails.
+  String get toWhiteBackground => backgroundWhite.wrap(this) ?? this;
 }

@@ -1,3 +1,16 @@
+# 0.2.8
+
+### Features ✨
+
+- feat: add missing foreground colors to string extensions
+  - Add basic colors (`toBlack`, `toRed`, `toGreen`, `toYellow`, `toBlue`, `toMagenta`, `toCyan`)
+  - Add additional colors (`toLightGray`, `toDefaultForeground`, `toDarkGray`, `toWhite`)
+  - Ensures complete coverage of all available ANSI color options
+- feat: add background color extensions as new `LoggerStringExtensionBackgroundColors`
+  - Add all background color variants (e.g., `toBlackBackground`, `toRedBackground`, etc.)
+  - Support all 16 standard background colors including light variants
+  - Enable easy application of background colors to strings
+
 # 0.2.7
 
 ### Features ✨
