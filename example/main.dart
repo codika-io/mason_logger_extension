@@ -108,8 +108,17 @@ It is a block of text that is displayed ${'piscine blue'.toLightCyan} in a box.
   // Example with encloseFreeSide set to false
   logger.titledSeparator(
     'Title Without Enclosed Sides',
-    description:
-        'This example shows how it (${'description'.toBold.toLightCyan}) looks when encloseFreeSide is set to false.',
+    description: '''
+This example shows how it (${'description'.toBold.toLightCyan}) looks when encloseFreeSide is set to false.
+
+This is a paragraph.
+It is a block of text that is displayed in a box.
+- A list item.
+- Another list item.(${'description'.toBold.toLightCyan})
+- A longer list item that will wrap to the next line if it is too long.(${'description'.toBold.toLightCyan})
+
+It is a block of text that is displayed in a box.
+''',
     encloseFreeSide: false,
   );
 

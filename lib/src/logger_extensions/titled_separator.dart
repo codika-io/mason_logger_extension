@@ -38,6 +38,8 @@ extension LoggerExtensionTitledSeparator on Logger {
   /// [borderStyle] The style of border to use
   /// [borderColor] The color of the border characters
   /// [encloseFreeSide] Whether to enclose the free side(s) of the bottom line with top-corner characters (┌/┐)
+  /// [description] Optional description text to display below the title box using paragraphFramed
+  /// [innerPadding] Horizontal padding between the frame border and description text (default: 2)
   void titledSeparator(
     String title, {
     TableContentAlign align = TableContentAlign.center,
@@ -47,6 +49,7 @@ extension LoggerExtensionTitledSeparator on Logger {
     AnsiCode borderColor = darkGray,
     bool encloseFreeSide = true,
     String? description,
+    int innerPadding = 2,
   }) {
     // Get border characters
     final topLeft = borderColor.wrap(
@@ -149,6 +152,18 @@ extension LoggerExtensionTitledSeparator on Logger {
           ..info('$alignmentPadding$titleTopLine')
           ..info('$alignmentPadding$titleMiddleLine')
           ..info(bottomLine); // No alignment padding for bottom line
+    }
+
+    // Display the description if provided, using paragraphFramed
+    if (description != null && description.isNotEmpty) {
+      paragraphFramed(
+        description,
+        width: effectiveLength,
+        innerPadding: innerPadding,
+        borderStyle: borderStyle,
+        color: borderColor,
+        showUpperBorder: false,
+      );
     }
   }
 
