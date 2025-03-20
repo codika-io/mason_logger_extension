@@ -47,7 +47,8 @@ extension LoggerExtensionTitledSeparator on Logger {
     int titlePadding = 2,
     LoggerBorderStyle borderStyle = LoggerBorderStyle.rounded,
     AnsiCode borderColor = darkGray,
-    AnsiCode? descriptionColor,
+    AnsiCode descriptionColor = darkGray,
+    AnsiCode? numberColor = darkGray,
     bool encloseFreeSide = true,
     String? description,
     int innerPadding = 2,
@@ -164,9 +165,13 @@ extension LoggerExtensionTitledSeparator on Logger {
         borderStyle: borderStyle,
         color: descriptionColor,
         borderColor: borderColor,
+        numberColor: numberColor,
         showUpperBorder: false,
       );
     }
+    info(
+      '$bottomLeft${horizontal * (effectiveLength - 2)}$bottomRight',
+    );
   }
 
   /// Helper method to pad the title text with the specified padding

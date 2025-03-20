@@ -63,7 +63,7 @@ extension LoggerExtensionTexts on Logger {
   /// * [numberColor] - Optional color to apply to numbers in numbered lists (default: null)
   void paragraph(
     String text, {
-    int width = 50,
+    int width = 60,
     int indentation = 0,
     LoggerTextAlign align = LoggerTextAlign.left,
     String bulletChar = '• ', // Character to use for bullet points
@@ -173,7 +173,7 @@ extension LoggerExtensionTexts on Logger {
   /// * [showBottomBorder] - Whether to display the bottom border (default: true)
   void paragraphFramed(
     String text, {
-    int width = 50,
+    int width = 60,
     int indentation = 0,
     LoggerTextAlign align = LoggerTextAlign.left,
     String bulletChar = '• ',
@@ -342,7 +342,7 @@ extension LoggerExtensionTexts on Logger {
   /// Returns a formatted string containing the formatted paragraph text.
   String formatParagraph(
     String text, {
-    int width = 50,
+    int width = 60,
     int indentation = 0,
     LoggerTextAlign align = LoggerTextAlign.left,
     String bulletChar = '• ', // Character to use for bullet points
