@@ -89,7 +89,6 @@ This is a paragraph containing a lot of stuf. It should return to the line autom
 - Second item
 - Third item
 ''',
-      frame: true,
     );
 
     // Lists with bullets and anchors

@@ -46,6 +46,7 @@ extension LoggerExtensionTitledSeparator on Logger {
     LoggerBorderStyle borderStyle = LoggerBorderStyle.rounded,
     AnsiCode borderColor = darkGray,
     bool encloseFreeSide = true,
+    String? description,
   }) {
     // Get border characters
     final topLeft = borderColor.wrap(

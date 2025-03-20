@@ -6,7 +6,9 @@ import 'package:mason_logger_extension/mason_logger_extension.dart';
 void main() {
   final logger = Logger();
 
-  logger.codikaLoggerExtensionExample();
+  // logger.codikaLoggerExtensionExample();
+
+  logger.info('123456789_123456789_123456789_123456789_123456789_');
 
   logger.info('');
   logger.info('Mason Logger Extension Example');
