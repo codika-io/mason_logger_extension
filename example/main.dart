@@ -117,6 +117,10 @@ It is a block of text that is displayed in a box.
 - Another list item.(${'description'.toBold.toLightCyan})
 - A longer list item that will wrap to the next line if it is too long.(${'description'.toBold.toLightCyan})
 
+1. sdf
+2. vfinoerivn
+3. =EFsf
+
 It is a block of text that is displayed in a box.
 ''',
     encloseFreeSide: false,

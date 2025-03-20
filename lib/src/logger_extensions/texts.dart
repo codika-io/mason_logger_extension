@@ -28,6 +28,7 @@ extension LoggerExtensionTexts on Logger {
   /// Double newlines (or more) are preserved as paragraph breaks.
   ///
   /// Bullet points are automatically detected when a line starts with a dash '-'.
+  /// Numbered list items are detected when a line starts with a number followed by a period (e.g., "1.").
   /// These are formatted with proper indentation for wrapped lines.
   ///
   /// Example:
@@ -36,7 +37,9 @@ extension LoggerExtensionTexts on Logger {
   ///   'This is a paragraph with bullet points:\n'
   ///   '- First bullet point that might wrap to the next line\n'
   ///   '- Second bullet point\n\n'
-  ///   'And this is a new paragraph without bullets.',
+  ///   'And a numbered list:\n'
+  ///   '1. First item\n'
+  ///   '2. Second item',
   ///   width: 40,
   ///   indentation: 3,
   ///   align: LoggerTextAlign.left,
@@ -54,8 +57,10 @@ extension LoggerExtensionTexts on Logger {
   /// * [bulletIndentation] - Additional indentation for bullet points (default: 2)
   /// * [enableHyphenation] - Whether to enable hyphenation for long words (default: false)
   /// * [autoBullets] - Whether to automatically detect bullet points (default: true)
+  /// * [autoNumbers] - Whether to automatically detect numbered lists (default: true)
   /// * [autowrap] - Whether to ignore single newlines and flow text continuously (default: true)
   /// * [color] - Optional color to apply to text that doesn't already have color formatting (default: null)
+  /// * [numberColor] - Optional color to apply to numbers in numbered lists (default: null)
   void paragraph(
     String text, {
     int width = 50,
@@ -65,8 +70,10 @@ extension LoggerExtensionTexts on Logger {
     int bulletIndentation = 2,
     bool enableHyphenation = false,
     bool autoBullets = true,
+    bool autoNumbers = true,
     bool autowrap = true,
     AnsiCode? color = darkGray,
+    AnsiCode? numberColor,
   }) {
     if (text.isEmpty) {
       return;
@@ -82,8 +89,10 @@ extension LoggerExtensionTexts on Logger {
       bulletIndentation: bulletIndentation,
       enableHyphenation: enableHyphenation,
       autoBullets: autoBullets,
+      autoNumbers: autoNumbers,
       autowrap: autowrap,
       color: color,
+      numberColor: numberColor,
     );
 
     // Split the formatted text into lines and log each line
@@ -171,8 +180,10 @@ extension LoggerExtensionTexts on Logger {
     int bulletIndentation = 2,
     bool enableHyphenation = false,
     bool autoBullets = true,
+    bool autoNumbers = true,
     bool autowrap = true,
     AnsiCode? color = darkGray,
+    AnsiCode? numberColor,
     AnsiCode borderColor = darkGray,
     int innerPadding = 2,
     int verticalInnerPadding = 1,
@@ -215,8 +226,10 @@ extension LoggerExtensionTexts on Logger {
       bulletIndentation: bulletIndentation,
       enableHyphenation: enableHyphenation,
       autoBullets: autoBullets,
+      autoNumbers: autoNumbers,
       autowrap: autowrap,
       color: color,
+      numberColor: numberColor,
     );
 
     // Get border characters for the selected style
@@ -258,11 +271,10 @@ extension LoggerExtensionTexts on Logger {
 
     // Content lines
     final contentLines = formattedText.split('\n');
-    // Filter out empty lines
-    final nonEmptyContentLines =
-        contentLines.where((line) => line.trim().isNotEmpty).toList();
+    // Don't filter out empty lines so that blank lines in the input are preserved
+    // final nonEmptyContentLines = contentLines.where((line) => line.trim().isNotEmpty).toList();
 
-    for (final line in nonEmptyContentLines) {
+    for (final line in contentLines) {
       final contentLineLength = line.visibleLength;
       final remainingSpace =
           width - 2 - (validInnerPadding * 2) - contentLineLength;
@@ -292,6 +304,7 @@ extension LoggerExtensionTexts on Logger {
   /// Double newlines (or more) are preserved as paragraph breaks.
   ///
   /// Bullet points are automatically detected when a line starts with a dash '-'.
+  /// Numbered list items are detected when a line starts with a number followed by a period (e.g., "1.").
   /// These are formatted with proper indentation for wrapped lines.
   ///
   /// Example:
@@ -300,7 +313,9 @@ extension LoggerExtensionTexts on Logger {
   ///   'This is a paragraph with bullet points:\n'
   ///   '- First bullet point that might wrap to the next line\n'
   ///   '- Second bullet point\n\n'
-  ///   'And this is a new paragraph without bullets.',
+  ///   'And a numbered list:\n'
+  ///   '1. First item\n'
+  ///   '2. Second item',
   ///   width: 40,
   ///   indentation: 3,
   ///   align: LoggerTextAlign.left,
@@ -319,8 +334,10 @@ extension LoggerExtensionTexts on Logger {
   /// * [bulletIndentation] - Additional indentation for bullet points (default: 2)
   /// * [enableHyphenation] - Whether to enable hyphenation for long words (default: false)
   /// * [autoBullets] - Whether to automatically detect bullet points (default: true)
+  /// * [autoNumbers] - Whether to automatically detect numbered lists (default: true)
   /// * [autowrap] - Whether to ignore single newlines and flow text continuously (default: true)
   /// * [color] - Optional color to apply to text that doesn't already have color formatting (default: null)
+  /// * [numberColor] - Optional color to apply to numbers in numbered lists (default: null)
   ///
   /// Returns a formatted string containing the formatted paragraph text.
   String formatParagraph(
@@ -332,8 +349,10 @@ extension LoggerExtensionTexts on Logger {
     int bulletIndentation = 2,
     bool enableHyphenation = false,
     bool autoBullets = true,
+    bool autoNumbers = true,
     bool autowrap = true,
     AnsiCode? color = darkGray,
+    AnsiCode? numberColor,
   }) {
     if (text.isEmpty) {
       return '';
@@ -362,6 +381,8 @@ extension LoggerExtensionTexts on Logger {
       // Process each logical section (either a bullet item or a continuous text block)
       var currentTextBlock = '';
       var isBulletSection = false;
+      var isNumberedSection = false;
+      var numberedPrefix = ''; // Store the number prefix (e.g., "1. ")
 
       for (var lineIndex = 0; lineIndex < lines.length; lineIndex++) {
         final line = lines[lineIndex];
@@ -379,13 +400,18 @@ extension LoggerExtensionTexts on Logger {
               indentation: indentation,
               align: align,
               isBulletLine: isBulletSection,
+              isNumberedLine: isNumberedSection,
               bulletChar: bulletChar,
+              numberPrefix: numberedPrefix,
               bulletIndentation: bulletIndentation,
               enableHyphenation: enableHyphenation,
               color: color,
+              numberColor: numberColor,
             );
             currentTextBlock = '';
             isBulletSection = false;
+            isNumberedSection = false;
+            numberedPrefix = '';
           }
           buffer.writeln();
           continue;
@@ -394,10 +420,16 @@ extension LoggerExtensionTexts on Logger {
         // Check if this line is a bullet point
         final isBulletLine = autoBullets && trimmedLine.startsWith('-');
 
-        // Handle bullet points as separate sections
-        if (isBulletLine) {
-          // Process any accumulated non-bullet text before starting a bullet
-          if (currentTextBlock.isNotEmpty && !isBulletSection) {
+        // Check if this line is a numbered list item (e.g., "1. ", "42. ")
+        final isNumberedLine =
+            autoNumbers && RegExp(r'^\d+\.\s').hasMatch(trimmedLine);
+
+        // Handle bullet points and numbered list items as separate sections
+        if (isBulletLine || isNumberedLine) {
+          // Process any accumulated non-bullet/non-numbered text before starting a bullet
+          if (currentTextBlock.isNotEmpty &&
+              !isBulletSection &&
+              !isNumberedSection) {
             _formatTextBlockToBuffer(
               buffer,
               currentTextBlock,
@@ -410,39 +442,73 @@ extension LoggerExtensionTexts on Logger {
               bulletIndentation: bulletIndentation,
               enableHyphenation: enableHyphenation,
               color: color,
+              numberColor: numberColor,
             );
             currentTextBlock = '';
           }
 
-          // Get the text content (remove the dash for bullet points)
-          final contentText = trimmedLine.substring(1).trimLeft();
+          if (isBulletLine) {
+            // Get the text content (remove the dash for bullet points)
+            final contentText = trimmedLine.substring(1).trimLeft();
 
-          // Process this bullet point
-          _formatLineToBuffer(
-            buffer,
-            contentText,
-            width: width,
-            effectiveWidth: effectiveWidth,
-            indentation: indentation,
-            align: align,
-            bullet: bulletChar,
-            isBulletLine: true,
-            bulletIndentation: bulletIndentation,
-            enableHyphenation: enableHyphenation,
-            color: color,
-          );
+            // Process this bullet point
+            _formatLineToBuffer(
+              buffer,
+              contentText,
+              width: width,
+              effectiveWidth: effectiveWidth,
+              indentation: indentation,
+              align: align,
+              bullet: bulletChar,
+              isBulletLine: true,
+              bulletIndentation: bulletIndentation,
+              enableHyphenation: enableHyphenation,
+              color: color,
+              numberColor: numberColor,
+            );
+          } else {
+            // It's a numbered list item
+            // Extract the number and the dot
+            final match = RegExp(r'^(\d+\.)').firstMatch(trimmedLine);
+            if (match != null) {
+              final numberDot = match.group(1)!;
+              final contentText =
+                  trimmedLine.substring(numberDot.length).trimLeft();
+
+              // Process this numbered list item
+              _formatLineToBuffer(
+                buffer,
+                contentText,
+                width: width,
+                effectiveWidth: effectiveWidth,
+                indentation: indentation,
+                align: align,
+                numberPrefix: '$numberDot ',
+                isBulletLine: false,
+                isNumberedLine: true,
+                bulletIndentation: bulletIndentation,
+                enableHyphenation: enableHyphenation,
+                color: color,
+                numberColor: numberColor,
+              );
+            }
+          }
         } else {
-          // For non-bullet lines, we either append to the current text block
+          // For non-bullet/non-numbered lines, we either append to the current text block
           // or start a new text block based on the autowrap setting
           if (autowrap) {
             // When autowrapping, append to the current text block
-            if (currentTextBlock.isNotEmpty && !isBulletSection) {
+            if (currentTextBlock.isNotEmpty &&
+                !isBulletSection &&
+                !isNumberedSection) {
               // Add a space between lines to maintain word separation
               currentTextBlock += ' $trimmedLine';
             } else {
               // Start a new text block
               currentTextBlock = trimmedLine;
               isBulletSection = false;
+              isNumberedSection = false;
+              numberedPrefix = '';
             }
           } else {
             // When not autowrapping, process each line separately
@@ -457,6 +523,7 @@ extension LoggerExtensionTexts on Logger {
               bulletIndentation: bulletIndentation,
               enableHyphenation: enableHyphenation,
               color: color,
+              numberColor: numberColor,
             );
           }
         }
@@ -472,10 +539,13 @@ extension LoggerExtensionTexts on Logger {
           indentation: indentation,
           align: align,
           isBulletLine: isBulletSection,
+          isNumberedLine: isNumberedSection,
           bulletChar: bulletChar,
+          numberPrefix: numberedPrefix,
           bulletIndentation: bulletIndentation,
           enableHyphenation: enableHyphenation,
           color: color,
+          numberColor: numberColor,
         );
       }
 
@@ -538,8 +608,15 @@ extension LoggerExtensionTexts on Logger {
     required String bulletChar,
     required int bulletIndentation,
     required bool enableHyphenation,
+    bool isNumberedLine = false,
+    String numberPrefix = '',
     AnsiCode? color,
+    AnsiCode? numberColor,
   }) {
+    // Create variables with default values to avoid null issues
+    final safeNumberPrefix = isNumberedLine ? numberPrefix : '';
+    final safeBullet = isBulletLine ? bulletChar : '';
+
     _formatLineToBuffer(
       buffer,
       text,
@@ -547,11 +624,14 @@ extension LoggerExtensionTexts on Logger {
       effectiveWidth: effectiveWidth,
       indentation: indentation,
       align: align,
-      bullet: isBulletLine ? bulletChar : null,
+      bullet: safeBullet,
+      numberPrefix: safeNumberPrefix,
       isBulletLine: isBulletLine,
+      isNumberedLine: isNumberedLine,
       bulletIndentation: bulletIndentation,
       enableHyphenation: enableHyphenation,
       color: color,
+      numberColor: numberColor,
     );
   }
 
@@ -566,47 +646,60 @@ extension LoggerExtensionTexts on Logger {
     required bool isBulletLine,
     required int bulletIndentation,
     required bool enableHyphenation,
-    String? bullet,
+    bool isNumberedLine = false,
+    String bullet = '',
+    String numberPrefix = '',
     AnsiCode? color,
+    AnsiCode? numberColor,
   }) {
-    // Calculate bullet adjustment
-    final hasBullet = bullet != null && bullet.isNotEmpty;
+    // Calculate bullet/number adjustment
+    final hasBullet = bullet.isNotEmpty;
+    final hasNumber = numberPrefix.isNotEmpty;
     final bulletVisibleLength = hasBullet ? bullet.visibleLength : 0;
+    final numberVisibleLength = hasNumber ? numberPrefix.visibleLength : 0;
+    final prefixVisibleLength = bulletVisibleLength + numberVisibleLength;
 
     // Calculate indentation for different line types
-    // For bullet lines, add bulletIndentation to the base indentation
-    final baseIndent =
-        isBulletLine ? indentation + bulletIndentation : indentation;
+    // For bullet/numbered lines, add bulletIndentation to the base indentation
+    final baseIndent = (isBulletLine || isNumberedLine)
+        ? indentation + bulletIndentation
+        : indentation;
 
-    // For the first line with bullet text, use the base indent
+    // For the first line with bullet text or number, use the base indent
     final firstLineIndent = baseIndent;
 
-    // For continuation lines of a bullet item, indent to align with text after bullet
-    final bulletContinuationIndent = baseIndent + bulletVisibleLength;
+    // For continuation lines of a bullet/numbered item, indent to align with text after bullet/number
+    final continuationIndent = baseIndent + prefixVisibleLength;
 
-    // For regular text (non-bullet), all lines use the same indentation
+    // For regular text (non-bullet, non-numbered), all lines use the same indentation
     final regularIndent = indentation;
 
     // Available width for text on different lines
-    final firstBulletLineWidth =
-        effectiveWidth - bulletIndentation - bulletVisibleLength;
-    final continuationBulletLineWidth =
-        effectiveWidth - bulletIndentation - bulletVisibleLength;
+    final firstSpecialLineWidth =
+        effectiveWidth - bulletIndentation - prefixVisibleLength;
+    final continuationSpecialLineWidth =
+        effectiveWidth - bulletIndentation - prefixVisibleLength;
     final regularLineWidth = effectiveWidth;
 
     // Determine the appropriate width based on line type
-    final firstLineWidth =
-        isBulletLine ? firstBulletLineWidth : regularLineWidth;
-    final continuationLineWidth =
-        isBulletLine ? continuationBulletLineWidth : regularLineWidth;
+    final firstLineWidth = (isBulletLine || isNumberedLine)
+        ? firstSpecialLineWidth
+        : regularLineWidth;
+    final continuationLineWidth = (isBulletLine || isNumberedLine)
+        ? continuationSpecialLineWidth
+        : regularLineWidth;
 
     // Split into words
     final words = text.split(' ').where((w) => w.isNotEmpty).toList();
 
     if (words.isEmpty) {
-      // If there are no words but we have a bullet, still add the bullet
+      // If there are no words but we have a bullet or number, still add it
       if (hasBullet) {
         buffer.writeln(' ' * baseIndent + bullet);
+      } else if (hasNumber) {
+        final formattedNumber =
+            numberColor != null ? numberColor.wrap(numberPrefix) : numberPrefix;
+        buffer.writeln(' ' * baseIndent + formattedNumber!);
       } else {
         // Add an empty line with indentation
         buffer.writeln(' ' * regularIndent);
@@ -649,9 +742,13 @@ extension LoggerExtensionTexts on Logger {
                 align,
                 isFirstLine
                     ? firstLineIndent
-                    : (isBulletLine ? bulletContinuationIndent : regularIndent),
-                isFirstLine && hasBullet ? bullet : null,
+                    : ((isBulletLine || isNumberedLine)
+                        ? continuationIndent
+                        : regularIndent),
+                isFirstLine && hasBullet ? bullet : '',
+                isFirstLine && hasNumber ? numberPrefix : '',
                 color,
+                numberColor,
               ),
             );
 
@@ -662,9 +759,13 @@ extension LoggerExtensionTexts on Logger {
                   hyphenated[j],
                   continuationLineWidth,
                   align,
-                  isBulletLine ? bulletContinuationIndent : regularIndent,
-                  null,
+                  (isBulletLine || isNumberedLine)
+                      ? continuationIndent
+                      : regularIndent,
+                  '',
+                  '',
                   color,
+                  numberColor,
                 ),
               );
             }
@@ -691,9 +792,13 @@ extension LoggerExtensionTexts on Logger {
             align,
             isFirstLine
                 ? firstLineIndent
-                : (isBulletLine ? bulletContinuationIndent : regularIndent),
-            isFirstLine && hasBullet ? bullet : null,
+                : ((isBulletLine || isNumberedLine)
+                    ? continuationIndent
+                    : regularIndent),
+            isFirstLine && hasBullet ? bullet : '',
+            isFirstLine && hasNumber ? numberPrefix : '',
             color,
+            numberColor,
           ),
         );
         currentLine = word;
@@ -710,9 +815,13 @@ extension LoggerExtensionTexts on Logger {
           align,
           isFirstLine
               ? firstLineIndent
-              : (isBulletLine ? bulletContinuationIndent : regularIndent),
-          isFirstLine && hasBullet ? bullet : null,
+              : ((isBulletLine || isNumberedLine)
+                  ? continuationIndent
+                  : regularIndent),
+          isFirstLine && hasBullet ? bullet : '',
+          isFirstLine && hasNumber ? numberPrefix : '',
           color,
+          numberColor,
         ),
       );
     }
@@ -781,14 +890,24 @@ extension LoggerExtensionTexts on Logger {
     int width,
     LoggerTextAlign align,
     int indentation,
-    String? prefix,
+    String prefix,
+    String numberPrefix,
     AnsiCode? color,
+    AnsiCode? numberColor,
   ) {
     final indent = ' ' * indentation;
-    final prefixStr = prefix ?? '';
+    final prefixStr = prefix;
+    final numberPrefixStr = numberPrefix;
 
-    // Calculate the available width after indentation and prefix
-    final availableWidth = width - prefixStr.visibleLength;
+    // Apply color to the number prefix if specified
+    final coloredNumberPrefix =
+        numberColor != null && numberPrefixStr.isNotEmpty
+            ? numberColor.wrap(numberPrefixStr)
+            : numberPrefixStr;
+
+    // Calculate the available width after indentation and prefixes
+    final availableWidth =
+        width - prefixStr.visibleLength - numberPrefixStr.visibleLength;
 
     // Apply color to the text if specified and the text doesn't already have ANSI codes
     // We only apply color to portions that don't already have ANSI codes
@@ -890,6 +1009,7 @@ extension LoggerExtensionTexts on Logger {
         final padding = availableWidth - text.visibleLength;
         return indent +
             prefixStr +
+            coloredNumberPrefix! +
             ' ' * (padding > 0 ? padding : 0) +
             coloredText;
 
@@ -897,11 +1017,12 @@ extension LoggerExtensionTexts on Logger {
         final padding = (availableWidth - text.visibleLength) ~/ 2;
         return indent +
             prefixStr +
+            coloredNumberPrefix! +
             ' ' * (padding > 0 ? padding : 0) +
             coloredText;
 
       case LoggerTextAlign.left:
-        return indent + prefixStr + coloredText;
+        return indent + prefixStr + coloredNumberPrefix! + coloredText;
     }
   }
 }
