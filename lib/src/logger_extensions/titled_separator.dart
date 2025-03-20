@@ -40,6 +40,7 @@ extension LoggerExtensionTitledSeparator on Logger {
   /// [encloseFreeSide] Whether to enclose the free side(s) of the bottom line with top-corner characters (┌/┐)
   /// [description] Optional description text to display below the title box using paragraphFramed
   /// [innerPadding] Horizontal padding between the frame border and description text (default: 2)
+  /// [addBottomBorder] Whether to add a bottom border to the title box (default: true)
   void titledSeparator(
     String title, {
     TableContentAlign align = TableContentAlign.center,
@@ -52,6 +53,7 @@ extension LoggerExtensionTitledSeparator on Logger {
     bool encloseFreeSide = true,
     String? description,
     int innerPadding = 2,
+    bool addBottomBorder = true,
   }) {
     // Get border characters
     final topLeft = borderColor.wrap(
@@ -168,10 +170,11 @@ extension LoggerExtensionTitledSeparator on Logger {
         numberColor: numberColor,
         showUpperBorder: false,
       );
+    } else if (addBottomBorder) {
+      info(
+        '$bottomLeft${horizontal * (effectiveLength - 2)}$bottomRight',
+      );
     }
-    info(
-      '$bottomLeft${horizontal * (effectiveLength - 2)}$bottomRight',
-    );
   }
 
   /// Helper method to pad the title text with the specified padding
