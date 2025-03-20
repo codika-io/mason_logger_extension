@@ -47,6 +47,7 @@ extension LoggerExtensionTitledSeparator on Logger {
     int titlePadding = 2,
     LoggerBorderStyle borderStyle = LoggerBorderStyle.rounded,
     AnsiCode borderColor = darkGray,
+    AnsiCode? descriptionColor,
     bool encloseFreeSide = true,
     String? description,
     int innerPadding = 2,
@@ -161,7 +162,8 @@ extension LoggerExtensionTitledSeparator on Logger {
         width: effectiveLength,
         innerPadding: innerPadding,
         borderStyle: borderStyle,
-        color: borderColor,
+        color: descriptionColor,
+        borderColor: borderColor,
         showUpperBorder: false,
       );
     }

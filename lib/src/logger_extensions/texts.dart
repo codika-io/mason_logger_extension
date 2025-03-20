@@ -159,6 +159,7 @@ extension LoggerExtensionTexts on Logger {
   /// * [topPadding] - Number of empty lines above the text (overrides verticalInnerPadding for top)
   /// * [bottomPadding] - Number of empty lines below the text (overrides verticalInnerPadding for bottom)
   /// * [borderStyle] - Style to use for the frame border (default: LoggerBorderStyle.rounded)
+  /// * [borderColor] - Optional color for the frame border (default: darkGray)
   /// * [showUpperBorder] - Whether to display the top border (default: true)
   /// * [showBottomBorder] - Whether to display the bottom border (default: true)
   void paragraphFramed(
@@ -172,6 +173,7 @@ extension LoggerExtensionTexts on Logger {
     bool autoBullets = true,
     bool autowrap = true,
     AnsiCode? color = darkGray,
+    AnsiCode borderColor = darkGray,
     int innerPadding = 2,
     int verticalInnerPadding = 1,
     int? topPadding,
@@ -218,13 +220,24 @@ extension LoggerExtensionTexts on Logger {
     );
 
     // Get border characters for the selected style
-    final topLeft = LoggerBorder.getChar(borderStyle, BorderPart.topLeft);
-    final topRight = LoggerBorder.getChar(borderStyle, BorderPart.topRight);
-    final bottomLeft = LoggerBorder.getChar(borderStyle, BorderPart.bottomLeft);
-    final bottomRight =
+    final topLeft = borderColor
+            .wrap(LoggerBorder.getChar(borderStyle, BorderPart.topLeft)) ??
+        LoggerBorder.getChar(borderStyle, BorderPart.topLeft);
+    final topRight = borderColor
+            .wrap(LoggerBorder.getChar(borderStyle, BorderPart.topRight)) ??
+        LoggerBorder.getChar(borderStyle, BorderPart.topRight);
+    final bottomLeft = borderColor
+            .wrap(LoggerBorder.getChar(borderStyle, BorderPart.bottomLeft)) ??
+        LoggerBorder.getChar(borderStyle, BorderPart.bottomLeft);
+    final bottomRight = borderColor
+            .wrap(LoggerBorder.getChar(borderStyle, BorderPart.bottomRight)) ??
         LoggerBorder.getChar(borderStyle, BorderPart.bottomRight);
-    final horizontal = LoggerBorder.getChar(borderStyle, BorderPart.horizontal);
-    final vertical = LoggerBorder.getChar(borderStyle, BorderPart.vertical);
+    final horizontal = borderColor
+            .wrap(LoggerBorder.getChar(borderStyle, BorderPart.horizontal)) ??
+        LoggerBorder.getChar(borderStyle, BorderPart.horizontal);
+    final vertical = borderColor
+            .wrap(LoggerBorder.getChar(borderStyle, BorderPart.vertical)) ??
+        LoggerBorder.getChar(borderStyle, BorderPart.vertical);
 
     // Create the frame components
     final horizontalBorder = horizontal * (width - 2);
@@ -245,7 +258,11 @@ extension LoggerExtensionTexts on Logger {
 
     // Content lines
     final contentLines = formattedText.split('\n');
-    for (final line in contentLines) {
+    // Filter out empty lines
+    final nonEmptyContentLines =
+        contentLines.where((line) => line.trim().isNotEmpty).toList();
+
+    for (final line in nonEmptyContentLines) {
       final contentLineLength = line.visibleLength;
       final remainingSpace =
           width - 2 - (validInnerPadding * 2) - contentLineLength;
@@ -474,10 +491,39 @@ extension LoggerExtensionTexts on Logger {
     // First, trim any trailing newlines completely
     formattedText = formattedText.trimRight();
 
-    // Then add exactly one newline at the end
-    formattedText += '\n';
+    // Apply trimming to remove empty lines at start and end
+    formattedText = _trimEmptyLinesAtStartAndEnd(formattedText);
 
     return formattedText;
+  }
+
+  /// Helper method to trim empty lines at start and end of text
+  String _trimEmptyLinesAtStartAndEnd(String text) {
+    if (text.isEmpty) return text;
+
+    // Split into lines
+    final lines = text.split('\n');
+
+    // Find first non-empty line
+    var startIndex = 0;
+    while (startIndex < lines.length && lines[startIndex].trim().isEmpty) {
+      startIndex++;
+    }
+
+    // If all lines are empty, return an empty string
+    if (startIndex >= lines.length) return '';
+
+    // Find last non-empty line
+    var endIndex = lines.length - 1;
+    while (endIndex >= 0 && lines[endIndex].trim().isEmpty) {
+      endIndex--;
+    }
+
+    // Extract the non-empty lines
+    final trimmedLines = lines.sublist(startIndex, endIndex + 1);
+
+    // Rejoin the lines
+    return trimmedLines.join('\n');
   }
 
   /// Process a block of text, formatting it as a paragraph and adding it to the buffer.
@@ -745,7 +791,7 @@ extension LoggerExtensionTexts on Logger {
     final availableWidth = width - prefixStr.visibleLength;
 
     // Apply color to the text if specified and the text doesn't already have ANSI codes
-    // We only apply color to portions that don't already have color
+    // We only apply color to portions that don't already have ANSI codes
     var coloredText = text;
     if (color != null) {
       // If the text already has ANSI codes, we need to apply color selectively
