@@ -15,7 +15,25 @@ void main() {
   logger.info('==============================');
   logger.info('');
 
-  logger.paragraph(
+  logger.paragraphFramed(
+    '''
+This is a paragraph.
+It is a block of text that is displayed in a box.
+- A list item.
+- Another list item.
+- A longer list item that will wrap to the next line if it is too long.
+
+It is a block of text that is displayed in a box.
+
+It is a block of text that is displayed in a box.
+It is a block of text that is displayed in a box.
+''',
+    innerPadding: 5,
+    verticalInnerPadding: 3,
+    showBottomBorder: false,
+    showUpperBorder: false,
+  );
+  logger.paragraphFramed(
     '''
 This is a paragraph.
 It is a block of text that is displayed in a box.
@@ -30,7 +48,7 @@ It is a block of text that is displayed in a box.
 ''',
   );
 
-  logger.paragraph(
+  logger.paragraphFramed(
     '''
 This should be bold. ${'piscine blue'.toBold}
 It is a block of text that is displayed in a box.

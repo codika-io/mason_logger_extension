@@ -1,4 +1,5 @@
 import 'package:mason/mason.dart';
+import 'package:mason_logger_extension/src/constants/border_library.dart';
 import 'package:mason_logger_extension/src/string_extensions/ansi.dart';
 
 /// Enum representing text alignment options for formatted text.
@@ -89,6 +90,179 @@ extension LoggerExtensionTexts on Logger {
     final lines = formattedText.split('\n');
     for (final line in lines) {
       info(line);
+    }
+  }
+
+  /// Formats and logs text as a paragraph with a frame around it.
+  ///
+  /// This method creates a framed paragraph with customizable horizontal and
+  /// vertical padding. The width parameter refers to the width of the entire frame,
+  /// not just the text within it.
+  ///
+  /// Example:
+  /// ```dart
+  /// logger.paragraphFramed(
+  ///   'This is a framed paragraph with some text that will wrap to fit within the frame.',
+  ///   width: 50,
+  ///   innerPadding: 2,
+  ///   verticalInnerPadding: 1,
+  ///   borderStyle: LoggerBorderStyle.rounded,
+  /// );
+  /// ```
+  ///
+  /// This would produce a box like:
+  /// ```
+  /// ╭────────────────────────────────────────────────╮
+  /// │                                                │
+  /// │  This is a framed paragraph with some text     │
+  /// │  that will wrap to fit within the frame.       │
+  /// │                                                │
+  /// ╰────────────────────────────────────────────────╯
+  /// ```
+  ///
+  /// You can set different padding for top and bottom:
+  /// ```dart
+  /// logger.paragraphFramed(
+  ///   'A paragraph with more padding at the top than at the bottom.',
+  ///   topPadding: 3,
+  ///   bottomPadding: 1,
+  /// );
+  /// ```
+  ///
+  /// The top and bottom borders can be selectively hidden:
+  /// ```dart
+  /// logger.paragraphFramed(
+  ///   'A paragraph with only bottom border.',
+  ///   showUpperBorder: false,
+  /// );
+  ///
+  /// logger.paragraphFramed(
+  ///   'A paragraph with only side borders.',
+  ///   showUpperBorder: false,
+  ///   showBottomBorder: false,
+  /// );
+  /// ```
+  ///
+  /// Parameters:
+  /// * [text] - The text to format and log within the frame
+  /// * [width] - The width of the entire frame in characters (default: 50)
+  /// * [indentation] - Number of spaces to indent the entire frame (default: 0)
+  /// * [align] - Text alignment within the frame (default: LoggerTextAlign.left)
+  /// * [bulletChar] - Character to use for bullet points when detected (default: "• ")
+  /// * [bulletIndentation] - Additional indentation for bullet points (default: 2)
+  /// * [enableHyphenation] - Whether to enable hyphenation for long words (default: false)
+  /// * [autoBullets] - Whether to automatically detect bullet points (default: true)
+  /// * [autowrap] - Whether to ignore single newlines and flow text continuously (default: true)
+  /// * [color] - Optional color to apply to text that doesn't already have color formatting (default: null)
+  /// * [innerPadding] - Horizontal padding between the frame border and text (default: 2)
+  /// * [verticalInnerPadding] - Number of empty lines above and below the text (default: 1)
+  /// * [topPadding] - Number of empty lines above the text (overrides verticalInnerPadding for top)
+  /// * [bottomPadding] - Number of empty lines below the text (overrides verticalInnerPadding for bottom)
+  /// * [borderStyle] - Style to use for the frame border (default: LoggerBorderStyle.rounded)
+  /// * [showUpperBorder] - Whether to display the top border (default: true)
+  /// * [showBottomBorder] - Whether to display the bottom border (default: true)
+  void paragraphFramed(
+    String text, {
+    int width = 50,
+    int indentation = 0,
+    LoggerTextAlign align = LoggerTextAlign.left,
+    String bulletChar = '• ',
+    int bulletIndentation = 2,
+    bool enableHyphenation = false,
+    bool autoBullets = true,
+    bool autowrap = true,
+    AnsiCode? color = darkGray,
+    int innerPadding = 2,
+    int verticalInnerPadding = 1,
+    int? topPadding,
+    int? bottomPadding,
+    LoggerBorderStyle borderStyle = LoggerBorderStyle.rounded,
+    bool showUpperBorder = true,
+    bool showBottomBorder = true,
+  }) {
+    if (text.isEmpty) {
+      return;
+    }
+
+    // Validate padding values
+    final validInnerPadding = innerPadding < 0 ? 0 : innerPadding;
+
+    // Use separate padding values for top and bottom if provided,
+    // otherwise use verticalInnerPadding for both
+    final validTopPadding = (topPadding != null)
+        ? (topPadding < 0 ? 0 : topPadding)
+        : verticalInnerPadding;
+    final validBottomPadding = (bottomPadding != null)
+        ? (bottomPadding < 0 ? 0 : bottomPadding)
+        : verticalInnerPadding;
+
+    // Calculate text width (frame width minus borders and horizontal padding)
+    final textWidth = width - 2 - (validInnerPadding * 2);
+    if (textWidth <= 0) {
+      // If the resulting width is too small, log an error and return
+      err('Frame width is too small for the requested inner padding');
+      return;
+    }
+
+    // Format the inner paragraph text
+    final formattedText = formatParagraph(
+      text,
+      width: textWidth,
+      align: align,
+      bulletChar: bulletChar,
+      bulletIndentation: bulletIndentation,
+      enableHyphenation: enableHyphenation,
+      autoBullets: autoBullets,
+      autowrap: autowrap,
+      color: color,
+    );
+
+    // Get border characters for the selected style
+    final topLeft = LoggerBorder.getChar(borderStyle, BorderPart.topLeft);
+    final topRight = LoggerBorder.getChar(borderStyle, BorderPart.topRight);
+    final bottomLeft = LoggerBorder.getChar(borderStyle, BorderPart.bottomLeft);
+    final bottomRight =
+        LoggerBorder.getChar(borderStyle, BorderPart.bottomRight);
+    final horizontal = LoggerBorder.getChar(borderStyle, BorderPart.horizontal);
+    final vertical = LoggerBorder.getChar(borderStyle, BorderPart.vertical);
+
+    // Create the frame components
+    final horizontalBorder = horizontal * (width - 2);
+    final indent = ' ' * indentation;
+    final innerPaddingStr = ' ' * validInnerPadding;
+    final emptyContent = ' ' * (width - 2);
+
+    // Log the framed paragraph
+    if (showUpperBorder) {
+      // Top border
+      info('$indent$topLeft$horizontalBorder$topRight');
+    }
+
+    // Top vertical padding - using the top padding value
+    for (var i = 0; i < validTopPadding; i++) {
+      info('$indent$vertical$emptyContent$vertical');
+    }
+
+    // Content lines
+    final contentLines = formattedText.split('\n');
+    for (final line in contentLines) {
+      final contentLineLength = line.visibleLength;
+      final remainingSpace =
+          width - 2 - (validInnerPadding * 2) - contentLineLength;
+      final rightPadding = remainingSpace > 0 ? ' ' * remainingSpace : '';
+      info(
+        '$indent$vertical$innerPaddingStr$line$rightPadding$innerPaddingStr$vertical',
+      );
+    }
+
+    // Bottom vertical padding - using the bottom padding value
+    for (var i = 0; i < validBottomPadding; i++) {
+      info('$indent$vertical$emptyContent$vertical');
+    }
+
+    if (showBottomBorder) {
+      // Bottom border
+      info('$indent$bottomLeft$horizontalBorder$bottomRight');
     }
   }
 
@@ -294,7 +468,16 @@ extension LoggerExtensionTexts on Logger {
       }
     }
 
-    return buffer.toString();
+    // Get the formatted text
+    var formattedText = buffer.toString();
+
+    // First, trim any trailing newlines completely
+    formattedText = formattedText.trimRight();
+
+    // Then add exactly one newline at the end
+    formattedText += '\n';
+
+    return formattedText;
   }
 
   /// Process a block of text, formatting it as a paragraph and adding it to the buffer.
@@ -489,9 +672,16 @@ extension LoggerExtensionTexts on Logger {
     }
 
     // Add formatted lines to the buffer
-    for (final line in lines) {
-      buffer.writeln(line);
+    for (var i = 0; i < lines.length; i++) {
+      buffer.write(lines[i]);
+      // Only add newline if this is not the last line
+      if (i < lines.length - 1) {
+        buffer.write('\n');
+      }
     }
+
+    // Add a single newline at the end
+    buffer.write('\n');
   }
 
   /// Breaks a long word into parts to fit within the available width.
