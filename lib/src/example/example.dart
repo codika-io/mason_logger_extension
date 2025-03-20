@@ -17,6 +17,8 @@ extension LoggerExtensionExample on Logger {
     // Tables for structured data
     info('\n3. Table Example:'.toLink);
     table(
+      indentation: 4,
+      title: 'Task List',
       headers: ['Name', 'Status', 'Priority'],
       rows: [
         ['Task 1', 'Complete'.toLightGreen, 'High'.toLightRed],
@@ -31,6 +33,7 @@ extension LoggerExtensionExample on Logger {
       ],
     );
     table(
+      indentation: 1,
       headers: ['Name', 'Status', 'Priority'],
       rows: [
         ['Task 1', 'Complete'.toLightGreen, 'High'.toLightRed],
@@ -41,6 +44,7 @@ extension LoggerExtensionExample on Logger {
       stretchTitle: true,
     );
     table(
+      indentation: 4,
       headers: ['Name', 'Status', 'Priority'],
       rows: [
         ['Task 1', 'Complete'.toLightGreen, 'High'.toLightRed],
@@ -56,11 +60,36 @@ extension LoggerExtensionExample on Logger {
     );
     titledSeparator(
       'Left Title',
+      description: '''
+This is a paragraph containing a lot of stuf. It should return to the line automatically and show bullets :
+- First item
+- Second item
+- Third item
+''',
       align: TableContentAlign.left,
     );
     titledSeparator(
       'Right Title',
       align: TableContentAlign.right,
+    );
+
+    info('\n5. Paragraph Example:'.toLink);
+    paragraph(
+      '''
+This is a paragraph containing a lot of stuf. It should return to the line automatically and show bullets :
+- First item
+- Second item
+- Third item
+''',
+    );
+    paragraph(
+      '''
+This is a paragraph containing a lot of stuf. It should return to the line automatically and show bullets :
+- First item
+- Second item
+- Third item
+''',
+      frame: true,
     );
 
     // Lists with bullets and anchors
@@ -78,6 +107,14 @@ extension LoggerExtensionExample on Logger {
     // QR Code generation
     info('\n6. QR Code Example:'.toLink);
     qrCode('https://github.com/codika-io/mason_logger_extension');
+    qrCode(
+      'https://github.com/codika-io/mason_logger_extension',
+      indentation: 4,
+    );
+    qrCode(
+      'https://github.com/codika-io/mason_logger_extension',
+      centerInWidth: 34,
+    );
 
     // Interactive prompts (commented out as they require user input)
     info('\n7. Prompts Examples:'.toLink);

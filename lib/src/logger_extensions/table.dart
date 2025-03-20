@@ -63,6 +63,7 @@ extension LoggerExtensionTable on Logger {
   /// [title] Optional title displayed above the table
   /// [stretchTitle] Whether the title box should stretch to full table width (defaults to false)
   /// [titlePadding] Number of spaces to pad the title (defaults to 4, used when stretchTitle is false)
+  /// [indentation] Number of spaces to indent the table (defaults to 0)
   void table({
     required List<String> headers,
     required List<List<String>> rows,
@@ -75,6 +76,7 @@ extension LoggerExtensionTable on Logger {
     String? title,
     bool stretchTitle = false,
     int titlePadding = 4,
+    int indentation = 0,
   }) {
     assert(
       columnWidths == null || headers.length == columnWidths.length,
@@ -84,6 +86,9 @@ extension LoggerExtensionTable on Logger {
       rows.every((row) => row.length == headers.length),
       'All rows must have the same number of columns as headers',
     );
+
+    // Create the indentation prefix
+    final indent = ' ' * indentation;
 
     // Compute effective column widths
     final effectiveColumnWidths =
@@ -164,11 +169,11 @@ extension LoggerExtensionTable on Logger {
         skipTableTopLine = true;
 
         this
-          ..info('$topLeft$titleHorizontalLine$topRight')
+          ..info('$indent$topLeft$titleHorizontalLine$topRight')
           ..info(
-            '${vertical!} ${_padCenter(title, titleBoxWidth - 4)} $vertical',
+            '$indent${vertical!} ${_padCenter(title, titleBoxWidth - 4)} $vertical',
           )
-          ..info(titleBottomLine);
+          ..info('$indent$titleBottomLine');
       } else {
         // For non-stretched titles, create a small box just around the title
         // and center it above the table
@@ -189,8 +194,10 @@ extension LoggerExtensionTable on Logger {
 
         // Print the centered, compact title box
         this
-          ..info('$centeringPadding$topLeft$titleHorizontalLine$topRight')
-          ..info('$centeringPadding$vertical$paddedTitle$vertical');
+          ..info(
+            '$indent$centeringPadding$topLeft$titleHorizontalLine$topRight',
+          )
+          ..info('$indent$centeringPadding$vertical$paddedTitle$vertical');
 
         // The simplest approach: create a completely new table top line
         // without using ANSI-colored components from the original line
@@ -267,7 +274,7 @@ extension LoggerExtensionTable on Logger {
 
         // Replace the regular top line
         skipTableTopLine = true;
-        info(coloredTopLine);
+        info('$indent$coloredTopLine');
       }
     }
 
@@ -283,24 +290,24 @@ extension LoggerExtensionTable on Logger {
 
     // Print table
     if (!skipTableTopLine) {
-      info(tableTopLine);
+      info('$indent$tableTopLine');
     }
     this
       ..info(
-        '${vertical!} ${styledHeaders.asMap().entries.map((e) {
+        '$indent${vertical!} ${styledHeaders.asMap().entries.map((e) {
           final text = e.value!;
           final width = effectiveColumnWidths[e.key];
           return _padText(text, width, effectiveAlignments[e.key]);
         }).join(' $vertical ')} $vertical',
       )
-      ..info(middleLine);
+      ..info('$indent$middleLine');
 
     // Print rows with separators
     final lastIndex = rows.length - 1;
     for (var i = 0; i < rows.length; i++) {
       final row = rows[i];
       info(
-        '$vertical ${row.asMap().entries.map((e) {
+        '$indent$vertical ${row.asMap().entries.map((e) {
           final text = e.value;
           final width = effectiveColumnWidths[e.key];
           return _padText(text, width, effectiveAlignments[e.key]);
@@ -309,11 +316,11 @@ extension LoggerExtensionTable on Logger {
 
       // Add separator line between rows, but not after the last row
       if (i != lastIndex) {
-        info(middleLine);
+        info('$indent$middleLine');
       }
     }
 
-    info(bottomLine);
+    info('$indent$bottomLine');
   }
 
   /// Pads text according to the specified alignment and width.

@@ -21,7 +21,15 @@ extension LoggerExtensionQR on Logger {
   /// [data] The string data to encode in the QR code
   /// [spacingTop] Number of empty lines to add before the QR code (defaults to 1)
   /// [spacingBottom] Number of empty lines to add after the QR code (defaults to 1)
-  void qrCode(String data, {int spacingTop = 1, int spacingBottom = 1}) {
+  /// [indentation] Number of spaces to indent the QR code (defaults to 0)
+  /// [centerInWidth] Total width to center the QR code within (if specified and wider than the QR code)
+  void qrCode(
+    String data, {
+    int spacingTop = 1,
+    int spacingBottom = 1,
+    int indentation = 0,
+    int? centerInWidth,
+  }) {
     final qrCode = QrCode.fromData(
       data: data,
       errorCorrectLevel: QrErrorCorrectLevel.L,
@@ -29,8 +37,27 @@ extension LoggerExtensionQR on Logger {
 
     final qrImage = QrImage(qrCode);
 
+    // Create indentation prefix
+    final indent = ' ' * indentation;
+
+    // Calculate the actual width of the QR code in terminal characters
+    // Since we're iterating through x one by one in the rendering loop,
+    // the actual width is exactly qrImage.moduleCount characters
+    final qrWidth = qrImage.moduleCount;
+
+    // Calculate centering padding if centerInWidth is provided and greater than QR width
+    var centeringPadding = '';
+    if (centerInWidth != null && centerInWidth > qrWidth) {
+      final extraSpace = centerInWidth - qrWidth;
+      centeringPadding = ' ' * (extraSpace ~/ 2);
+    }
+
+    // Combined padding (indentation + centering)
+    final padding = indent + centeringPadding;
+
     nextLine(count: spacingTop);
     for (var y = 0; y < qrImage.moduleCount; y += 2) {
+      write(padding); // Apply padding at the start of each line
       for (var x = 0; x < qrImage.moduleCount; x++) {
         final topLeft = qrImage.isDark(y, x);
         final topRight =
