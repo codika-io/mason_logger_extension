@@ -60,17 +60,17 @@ extension LoggerExtensionExample on Logger {
     );
     titledSeparator(
       'Left Title',
-      description: '''
+      content: '''
 This is a paragraph containing a lot of stuf. It should return to the line automatically and show bullets :
 - First item
 - Second item
 - Third item
 ''',
-      align: TableContentAlign.left,
+      titleAlignement: TableContentAlign.left,
     );
     titledSeparator(
       'Right Title',
-      align: TableContentAlign.right,
+      titleAlignement: TableContentAlign.right,
     );
 
     info('\n5. Paragraph Example:'.toLink);

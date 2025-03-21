@@ -33,7 +33,7 @@
 
 ### Features ✨
 
-- feat: add `encloseFreeSide` parameter to titled separator component
+- feat: add `encloseFreeCorners` parameter to titled separator component
   - Allows enclosing the free extremities of the titled separator with top corner characters
   - Improves visual aesthetics for hierarchical UI elements
   - Creates a more enclosed, refined appearance when multiple separators are used together

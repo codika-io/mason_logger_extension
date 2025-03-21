@@ -27,7 +27,7 @@ extension LoggerExtensionTitledSeparator on Logger {
   /// logger.titledSeparator(
   ///   'Section Title',
   ///   align: TableContentAlign.right,
-  ///   encloseFreeSide: true, // Adds ┌ at the free end
+  ///   encloseFreeCorners: true, // Adds ┌ at the free end
   /// );
   /// ```
   ///
@@ -37,24 +37,91 @@ extension LoggerExtensionTitledSeparator on Logger {
   /// [titlePadding] Number of spaces to pad the title text
   /// [borderStyle] The style of border to use
   /// [borderColor] The color of the border characters
-  /// [encloseFreeSide] Whether to enclose the free side(s) of the bottom line with top-corner characters (┌/┐)
-  /// [description] Optional description text to display below the title box using paragraphFramed
-  /// [innerPadding] Horizontal padding between the frame border and description text (default: 2)
+  /// [encloseFreeCorners] Whether to enclose the free side(s) of the bottom line with top-corner characters (┌/┐)
+  /// [content] Optional content text to display below the title box using paragraphFramed
+  /// [contentPadding] Horizontal padding between the frame border and content text (default: 2)
   /// [addBottomBorder] Whether to add a bottom border to the title box (default: true)
+  /// [titleBoxExpand] Whether to make the title box expand across the entire width (default: false)
+  /// [indentation] Number of spaces to add as indentation before each line (default: 0)
   void titledSeparator(
     String title, {
-    TableContentAlign align = TableContentAlign.center,
     int length = 80,
-    int titlePadding = 2,
     LoggerBorderStyle borderStyle = LoggerBorderStyle.rounded,
     AnsiCode borderColor = darkGray,
-    AnsiCode descriptionColor = darkGray,
-    AnsiCode? numberColor = darkGray,
-    bool encloseFreeSide = true,
-    String? description,
-    int innerPadding = 2,
-    bool addBottomBorder = true,
+    bool addBottomBorder = false,
+    bool encloseFreeCorners = false,
+    int titlePadding = 2,
+    bool titleBoxExpand = false,
+    TableContentAlign titleAlignement = TableContentAlign.center,
+    String? content,
+    int contentPadding = 2,
+    AnsiCode contentColor = darkGray,
+    AnsiCode? numberColor,
+    LoggerTextAlign contentAlignement = LoggerTextAlign.left,
+    int indentation = 0,
   }) {
+    if (indentation <= 0) {
+      // If no indentation, use the normal flow
+      _titledSeparatorImpl(
+        title,
+        length: length,
+        borderStyle: borderStyle,
+        borderColor: borderColor,
+        addBottomBorder: addBottomBorder,
+        encloseFreeCorners: encloseFreeCorners,
+        titlePadding: titlePadding,
+        titleBoxExpand: titleBoxExpand,
+        titleAlignement: titleAlignement,
+        content: content,
+        contentPadding: contentPadding,
+        contentColor: contentColor,
+        numberColor: numberColor,
+        contentAlignement: contentAlignement,
+      );
+    } else {
+      // Create an indented logger wrapper
+      final indentedLogger = _IndentedLogger(this, indentation);
+
+      // Use the indented logger to display the titled separator
+      indentedLogger._titledSeparatorImpl(
+        title,
+        length: length,
+        borderStyle: borderStyle,
+        borderColor: borderColor,
+        addBottomBorder: addBottomBorder,
+        encloseFreeCorners: encloseFreeCorners,
+        titlePadding: titlePadding,
+        titleBoxExpand: titleBoxExpand,
+        titleAlignement: titleAlignement,
+        content: content,
+        contentPadding: contentPadding,
+        contentColor: contentColor,
+        numberColor: numberColor,
+        contentAlignement: contentAlignement,
+      );
+    }
+  }
+
+  /// The implementation of titledSeparator
+  /// This is used both by the normal flow and by the indented logger wrapper
+  void _titledSeparatorImpl(
+    String title, {
+    required int length,
+    required LoggerBorderStyle borderStyle,
+    required AnsiCode borderColor,
+    required bool addBottomBorder,
+    required bool encloseFreeCorners,
+    required int titlePadding,
+    required bool titleBoxExpand,
+    required TableContentAlign titleAlignement,
+    required String? content,
+    required int contentPadding,
+    required AnsiCode contentColor,
+    required AnsiCode? numberColor,
+    required LoggerTextAlign contentAlignement,
+  }) {
+    final effectiveNumberColor = numberColor ?? contentColor;
+
     // Get border characters
     final topLeft = borderColor.wrap(
       LoggerBorder.getChar(borderStyle, BorderPart.topLeft),
@@ -77,7 +144,12 @@ extension LoggerExtensionTitledSeparator on Logger {
     final teeUp = borderColor.wrap(
       LoggerBorder.getChar(borderStyle, BorderPart.teeUp),
     );
-
+    final teeRight = borderColor.wrap(
+      LoggerBorder.getChar(borderStyle, BorderPart.teeRight),
+    );
+    final teeLeft = borderColor.wrap(
+      LoggerBorder.getChar(borderStyle, BorderPart.teeLeft),
+    );
     // Calculate visible title length by stripping ANSI escape sequences
     final visibleTitleLength = title.visibleLength;
 
@@ -85,92 +157,115 @@ extension LoggerExtensionTitledSeparator on Logger {
     final titleWidth = visibleTitleLength + (titlePadding * 2);
 
     // Title box width is the title width plus the two vertical borders
-    final titleBoxWidth = titleWidth + 2;
+    final titleBoxWidth = titleBoxExpand ? length - 2 : titleWidth + 2;
 
     // Ensure the line is at least as wide as the title box
     final effectiveLength = length > titleBoxWidth ? length : titleBoxWidth + 2;
 
     // Create the horizontal line for the title box
-    final titleHorizontalLine = horizontal! * titleWidth;
+    final titleHorizontalLine = titleBoxExpand
+        ? horizontal! * (effectiveLength - 2)
+        : horizontal! * titleWidth;
 
     // Build the title box lines
+    final paddedTitle = titleBoxExpand
+        ? _padExpandedTitleText(title, effectiveLength - 2)
+        : _padTitleText(title, titlePadding);
+
     final titleTopLine = '$topLeft$titleHorizontalLine$topRight';
-    final titleMiddleLine =
-        '$vertical${_padTitleText(title, titlePadding)}$vertical';
+    final titleMiddleLine = '$vertical$paddedTitle$vertical';
 
     // Calculate alignment padding
     var alignmentPadding = '';
 
-    switch (align) {
-      case TableContentAlign.left:
-        // No padding for left alignment
-        alignmentPadding = '';
+    if (titleBoxExpand) {
+      // When title is expanded, it always fills the entire width
+      // So we show the full box without alignment padding
+      this
+        ..info(titleTopLine)
+        ..info(titleMiddleLine);
 
-        // For left alignment, keep bottom left corner rounded, but use tee for right connection
-        final bottomLineLength = effectiveLength - titleBoxWidth;
-        final bottomLine = encloseFreeSide
-            ? '$bottomLeft$titleHorizontalLine$teeUp${horizontal * (bottomLineLength - 1)}$topRight'
-            : '$bottomLeft$titleHorizontalLine$teeUp${horizontal * bottomLineLength}';
+      // Create the bottom line with tee or corner characters based on encloseFreeCorners
+      final bottomLine = encloseFreeCorners
+          ? '$teeRight${horizontal * (effectiveLength - 2)}$teeLeft'
+          : '$bottomLeft${horizontal * (effectiveLength - 2)}$bottomRight';
 
-        // Display the titled separator box
-        this
-          ..info('$alignmentPadding$titleTopLine')
-          ..info('$alignmentPadding$titleMiddleLine')
-          ..info('$alignmentPadding$bottomLine');
+      info(bottomLine);
+    } else {
+      // Standard behavior without expansion
+      switch (titleAlignement) {
+        case TableContentAlign.left:
+          // No padding for left alignment
+          alignmentPadding = '';
 
-      case TableContentAlign.right:
-        // Padding to right-align the box
-        final paddingWidth = effectiveLength - titleBoxWidth;
-        alignmentPadding = ' ' * paddingWidth;
+          // For left alignment, keep bottom left corner rounded, but use tee for right connection
+          final bottomLineLength = effectiveLength - titleBoxWidth;
+          final bottomLine = encloseFreeCorners
+              ? '$bottomLeft$titleHorizontalLine$teeUp${horizontal * (bottomLineLength - 1)}$topRight'
+              : '$bottomLeft$titleHorizontalLine$teeUp${horizontal * bottomLineLength}';
 
-        // For right alignment, use tee for left connection, but keep bottom right corner rounded
-        final bottomLineLength = effectiveLength - titleBoxWidth;
-        final bottomLine = encloseFreeSide
-            ? '$topLeft${horizontal * (bottomLineLength - 1)}$teeUp$titleHorizontalLine$bottomRight'
-            : '${horizontal * bottomLineLength}$teeUp$titleHorizontalLine$bottomRight';
+          // Display the titled separator box
+          this
+            ..info('$alignmentPadding$titleTopLine')
+            ..info('$alignmentPadding$titleMiddleLine')
+            ..info('$alignmentPadding$bottomLine');
 
-        // Display the titled separator box
-        this
-          ..info('$alignmentPadding$titleTopLine')
-          ..info('$alignmentPadding$titleMiddleLine')
-          ..info(bottomLine); // No alignment padding for bottom line
+        case TableContentAlign.right:
+          // Padding to right-align the box
+          final paddingWidth = effectiveLength - titleBoxWidth;
+          alignmentPadding = ' ' * paddingWidth;
 
-      case TableContentAlign.center:
+          // For right alignment, use tee for left connection, but keep bottom right corner rounded
+          final bottomLineLength = effectiveLength - titleBoxWidth;
+          final bottomLine = encloseFreeCorners
+              ? '$topLeft${horizontal * (bottomLineLength - 1)}$teeUp$titleHorizontalLine$bottomRight'
+              : '${horizontal * bottomLineLength}$teeUp$titleHorizontalLine$bottomRight';
 
-        // Padding to center the box
-        final paddingWidth = (effectiveLength - titleBoxWidth) ~/ 2;
-        alignmentPadding = ' ' * paddingWidth;
+          // Display the titled separator box
+          this
+            ..info('$alignmentPadding$titleTopLine')
+            ..info('$alignmentPadding$titleMiddleLine')
+            ..info(bottomLine); // No alignment padding for bottom line
 
-        // For center alignment, use tees for both left and right connections
-        final leftLineLength = paddingWidth;
-        final rightLineLength =
-            effectiveLength - titleBoxWidth - leftLineLength;
+        case TableContentAlign.center:
+          // Padding to center the box
+          final paddingWidth = (effectiveLength - titleBoxWidth) ~/ 2;
+          alignmentPadding = ' ' * paddingWidth;
 
-        // For center alignment, we can optionally enclose both sides
-        final bottomLine = encloseFreeSide
-            ? '$topLeft${horizontal * (leftLineLength - 1)}$teeUp$titleHorizontalLine$teeUp${horizontal * (rightLineLength - 1)}$topRight'
-            : '${horizontal * leftLineLength}$teeUp$titleHorizontalLine$teeUp${horizontal * rightLineLength}';
+          // For center alignment, use tees for both left and right connections
+          final leftLineLength = paddingWidth;
+          final rightLineLength =
+              effectiveLength - titleBoxWidth - leftLineLength;
 
-        // Display the titled separator box
-        this
-          ..info('$alignmentPadding$titleTopLine')
-          ..info('$alignmentPadding$titleMiddleLine')
-          ..info(bottomLine); // No alignment padding for bottom line
+          // For center alignment, we can optionally enclose both sides
+          final bottomLine = encloseFreeCorners
+              ? '$topLeft${horizontal * (leftLineLength - 1)}$teeUp$titleHorizontalLine$teeUp${horizontal * (rightLineLength - 1)}$topRight'
+              : '${horizontal * leftLineLength}$teeUp$titleHorizontalLine$teeUp${horizontal * rightLineLength}';
+
+          // Display the titled separator box
+          this
+            ..info('$alignmentPadding$titleTopLine')
+            ..info('$alignmentPadding$titleMiddleLine')
+            ..info(bottomLine); // No alignment padding for bottom line
+      }
     }
 
-    // Display the description if provided, using paragraphFramed
-    if (description != null && description.isNotEmpty) {
+    // Display the content if provided, using paragraphFramed
+    if (content != null && content.isNotEmpty) {
       paragraphFramed(
-        description,
+        content,
         width: effectiveLength,
-        innerPadding: innerPadding,
+        innerPadding: contentPadding,
         borderStyle: borderStyle,
-        color: descriptionColor,
+        color: contentColor,
         borderColor: borderColor,
-        numberColor: numberColor,
+        numberColor: effectiveNumberColor,
         showUpperBorder: false,
+        align: contentAlignement,
       );
-    } else if (addBottomBorder) {
+    } else if (addBottomBorder && !titleBoxExpand) {
+      // Only add the bottom border if we're not using an expanded title
+      // (expanded titles already have a bottom border)
       info(
         '$bottomLeft${horizontal * (effectiveLength - 2)}$bottomRight',
       );
@@ -181,5 +276,73 @@ extension LoggerExtensionTitledSeparator on Logger {
   String _padTitleText(String title, int padding) {
     final paddingStr = ' ' * padding;
     return '$paddingStr$title$paddingStr';
+  }
+
+  /// Helper method to precisely center a title in the available space
+  /// Ensures equal padding on both sides, or if odd space, places the extra space on the right
+  String _padExpandedTitleText(String title, int availableWidth) {
+    final visibleTitleLength = title.visibleLength;
+    final totalPaddingNeeded = availableWidth - visibleTitleLength;
+
+    // Calculate left and right padding (handling odd numbers)
+    final leftPadding = totalPaddingNeeded ~/ 2;
+    final rightPadding = totalPaddingNeeded - leftPadding;
+
+    return '${' ' * leftPadding}$title${' ' * rightPadding}';
+  }
+}
+
+/// A wrapper for Logger that adds indentation to each line of output
+class _IndentedLogger extends Logger {
+  _IndentedLogger(this._baseLogger, int indentationSpaces)
+      : _indentation = ' ' * indentationSpaces,
+        super();
+  final Logger _baseLogger;
+  final String _indentation;
+
+  @override
+  void info(String? message, {String? Function(String?)? style}) {
+    if (message != null) {
+      _baseLogger.info('$_indentation$message', style: style);
+    }
+  }
+
+  @override
+  void detail(String? message, {String? Function(String?)? style}) {
+    if (message != null) {
+      _baseLogger.detail('$_indentation$message', style: style);
+    }
+  }
+
+  @override
+  void err(String? message, {String? Function(String?)? style}) {
+    if (message != null) {
+      _baseLogger.err('$_indentation$message', style: style);
+    }
+  }
+
+  @override
+  void warn(
+    String? message, {
+    String? Function(String?)? style,
+    String tag = 'WARN',
+  }) {
+    if (message != null) {
+      _baseLogger.warn('$_indentation$message', style: style, tag: tag);
+    }
+  }
+
+  @override
+  void success(String? message, {String? Function(String?)? style}) {
+    if (message != null) {
+      _baseLogger.success('$_indentation$message', style: style);
+    }
+  }
+
+  @override
+  void write(String? message) {
+    if (message != null) {
+      _baseLogger.write('$_indentation$message');
+    }
   }
 }

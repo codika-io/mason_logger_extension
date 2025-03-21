@@ -32,11 +32,13 @@ It is a block of text that is displayed in a box.
     verticalInnerPadding: 3,
     showBottomBorder: false,
     showUpperBorder: false,
+    align: LoggerTextAlign.center,
   );
   logger.paragraphFramed(
     '''
 This is a paragraph.
 It is a block of text that is displayed in a box.
+
 - A list item.
 - Another list item.
 - A longer list item that will wrap to the next line if it is too long.
@@ -79,7 +81,7 @@ It is a block of text that is displayed ${'piscine blue'.toLightCyan} in a box.
   // Example of titled separator with description - centered (default)
   logger.titledSeparator(
     'Centered Title',
-    description:
+    content:
         'This is a description for the centered title. It will be displayed in a box below the title.',
   );
 
@@ -88,9 +90,9 @@ It is a block of text that is displayed ${'piscine blue'.toLightCyan} in a box.
   // Example of titled separator with description - left aligned
   logger.titledSeparator(
     'Left-Aligned Title',
-    description:
+    content:
         'This is a description for the left-aligned title.  (${'description'.toBold.toLightCyan}) It will be displayed in a box below the title.',
-    align: TableContentAlign.left,
+    titleAlignement: TableContentAlign.left,
   );
 
   logger.info('');
@@ -98,18 +100,18 @@ It is a block of text that is displayed ${'piscine blue'.toLightCyan} in a box.
   // Example of titled separator with description - right aligned
   logger.titledSeparator(
     'Right-Aligned Title',
-    description:
+    content:
         'This is a description for the right-aligned title. It will be displayed in a box below the title.',
-    align: TableContentAlign.right,
+    titleAlignement: TableContentAlign.right,
   );
 
   logger.info('');
 
-  // Example with encloseFreeSide set to false
+  // Example with encloseFreeCorners set to false
   logger.titledSeparator(
     'Title Without Enclosed Sides',
-    description: '''
-This example shows how it (${'description'.toBold.toLightCyan}) looks when encloseFreeSide is set to false.
+    content: '''
+This example shows how it (${'description'.toBold.toLightCyan}) looks when encloseFreeCorners is set to false.
 
 This is a paragraph.
 It is a block of text that is displayed in a box.
@@ -123,7 +125,7 @@ It is a block of text that is displayed in a box.
 
 It is a block of text that is displayed in a box.
 ''',
-    encloseFreeSide: false,
+    encloseFreeCorners: false,
   );
 
   logger.info('');
@@ -131,7 +133,7 @@ It is a block of text that is displayed in a box.
   // Example with long description that wraps
   logger.titledSeparator(
     'Title With Long Description',
-    description:
+    content:
         'This is a much longer (${'description'.toBold.toLightCyan}) that will need to wrap within the box. '
         'The text should automatically wrap to fit within the box width. '
         'This demonstrates(${'description'.toBold.toLightCyan})  how the text wrapping works for longer content '
@@ -144,7 +146,7 @@ It is a block of text that is displayed in a box.
   // Example with colored text in description
   logger.titledSeparator(
     'Colored Text Example',
-    description:
+    content:
         'This description contains ${lightCyan.wrap('colored text')} in the middle of a sentence. '
         'It should wrap correctly even when the ${lightRed.wrap('colored text is near')} the end of a line. '
         'Multiple colors like ${lightGreen.wrap('green')}, ${lightYellow.wrap('yellow')}, and ${lightMagenta.wrap('magenta')} '
