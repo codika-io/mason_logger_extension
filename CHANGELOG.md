@@ -1,3 +1,10 @@
+
+# 0.3.2
+
+### Features ✨
+
+- feat: add centering options to frames
+
 # 0.3.1
 
 ### Features ✨
